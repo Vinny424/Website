@@ -730,6 +730,89 @@
             50% { transform: scale(1.1); }
         }
 
+        /* Music Info Display */
+        .music-info {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 200px;
+            z-index: 1000;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.8rem;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .music-info.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .music-info .track-title {
+            color: #00d4ff;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .music-info .track-artist {
+            color: #ff006e;
+            font-weight: 400;
+            margin-bottom: 8px;
+        }
+
+        .music-info .track-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .music-info .track-btn {
+            background: none;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            border-radius: 5px;
+            color: #00d4ff;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.3s ease;
+        }
+
+        .music-info .track-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+        }
+
         /* 3D Perspective Effects */
         .perspective-card {
             perspective: 1000px;
@@ -902,6 +985,26 @@
     <div class="music-toggle" id="musicToggle">
         <span style="color: #00d4ff; font-size: 20px;">♪</span>
     </div>
+
+    <!-- Music Info Panel -->
+    <div class="music-info" id="musicInfo">
+        <div class="track-title" id="trackTitle">Orbit</div>
+        <div class="track-artist" id="trackArtist">by d0d</div>
+        <div class="volume-control">
+            <span style="color: #8b5cf6; font-size: 0.7rem;">Vol:</span>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+        </div>
+        <div class="track-controls">
+            <button class="track-btn" id="prevTrack">◀◀</button>
+            <button class="track-btn" id="nextTrack">▶▶</button>
+            <div style="color: rgba(255,255,255,0.6); font-size: 0.6rem;" id="trackProgress">0:00</div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="audioPlayer" preload="metadata">
+        <source src="orbit_d0d.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- Audio Visualizer -->
     <div class="audio-visualizer" id="audioVisualizer">
@@ -1280,21 +1383,102 @@
             // Visualizer is now controlled by music toggle, no auto-animation
         }
 
-        // Music Toggle
+        // Music Player System
         function initMusicToggle() {
             const toggle = document.getElementById('musicToggle');
+            const musicInfo = document.getElementById('musicInfo');
+            const audioPlayer = document.getElementById('audioPlayer');
             const bars = document.querySelectorAll('.audio-bar');
-            let isPlaying = false;
+            const volumeSlider = document.getElementById('volumeSlider');
+            const trackTitle = document.getElementById('trackTitle');
+            const trackArtist = document.getElementById('trackArtist');
+            const trackProgress = document.getElementById('trackProgress');
+            const prevBtn = document.getElementById('prevTrack');
+            const nextBtn = document.getElementById('nextTrack');
             
-            toggle.addEventListener('click', () => {
-                isPlaying = !isPlaying;
+            let isPlaying = false;
+            let currentTrackIndex = 0;
+            let showingInfo = false;
+            
+            // Music playlist
+            const playlist = [
+                { 
+                    file: 'orbit_d0d.mp3', 
+                    title: 'Orbit', 
+                    artist: 'by d0d',
+                    license: 'PJG9WXGFTPDCBERY'
+                },
+                { 
+                    file: 'space_ranger_moire.mp3', 
+                    title: 'Space Ranger', 
+                    artist: 'by moire',
+                    license: 'RGS7ESME97ZBRC7I'
+                },
+                { 
+                    file: 'tech_rev_pecan.mp3', 
+                    title: 'Technological Revolution', 
+                    artist: 'by Pecan Pie',
+                    license: 'Available on Uppbeat'
+                }
+            ];
+            
+            // Initialize audio
+            audioPlayer.volume = 0.7;
+            audioPlayer.loop = false;
+            
+            // Load current track
+            function loadTrack(index) {
+                const track = playlist[index];
+                audioPlayer.src = track.file;
+                trackTitle.textContent = track.title;
+                trackArtist.textContent = track.artist;
+            }
+            
+            // Update progress
+            function updateProgress() {
+                if (audioPlayer.duration) {
+                    const current = Math.floor(audioPlayer.currentTime);
+                    const minutes = Math.floor(current / 60);
+                    const seconds = current % 60;
+                    trackProgress.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+            
+            // Auto-advance to next track
+            audioPlayer.addEventListener('ended', () => {
+                currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+                loadTrack(currentTrackIndex);
                 if (isPlaying) {
-                    toggle.classList.add('playing');
-                    toggle.innerHTML = '<span style="color: #ff006e; font-size: 20px;">⏸</span>';
-                    
-                    // Start visualizer animation
-                    bars.forEach(bar => bar.classList.add('animate'));
+                    audioPlayer.play().catch(e => console.log('Playback failed:', e));
+                }
+            });
+            
+            // Progress tracking
+            audioPlayer.addEventListener('timeupdate', updateProgress);
+            
+            // Main toggle click
+            toggle.addEventListener('click', () => {
+                if (!isPlaying) {
+                    // Start playing
+                    audioPlayer.play().then(() => {
+                        isPlaying = true;
+                        toggle.classList.add('playing');
+                        toggle.innerHTML = '<span style="color: #ff006e; font-size: 20px;">⏸</span>';
+                        
+                        // Start visualizer animation
+                        bars.forEach(bar => bar.classList.add('animate'));
+                        
+                        // Show music info temporarily
+                        showMusicInfo();
+                    }).catch(e => {
+                        console.log('Playback failed - user interaction required:', e);
+                        // Still show the music info for user to interact
+                        showMusicInfo();
+                    });
                 } else {
+                    // Pause playing
+                    audioPlayer.pause();
+                    isPlaying = false;
                     toggle.classList.remove('playing');
                     toggle.innerHTML = '<span style="color: #00d4ff; font-size: 20px;">♪</span>';
                     
@@ -1302,6 +1486,66 @@
                     bars.forEach(bar => bar.classList.remove('animate'));
                 }
             });
+            
+            // Show music info panel
+            function showMusicInfo() {
+                if (!showingInfo) {
+                    musicInfo.classList.add('show');
+                    showingInfo = true;
+                    
+                    // Auto-hide after 5 seconds if music is playing
+                    setTimeout(() => {
+                        if (isPlaying && showingInfo) {
+                            musicInfo.classList.remove('show');
+                            showingInfo = false;
+                        }
+                    }, 5000);
+                }
+            }
+            
+            // Show info on toggle hover
+            toggle.addEventListener('mouseenter', showMusicInfo);
+            
+            // Keep info visible when hovering over it
+            musicInfo.addEventListener('mouseenter', () => {
+                if (showingInfo) {
+                    clearTimeout(); // Keep it visible
+                }
+            });
+            
+            musicInfo.addEventListener('mouseleave', () => {
+                if (showingInfo && isPlaying) {
+                    setTimeout(() => {
+                        musicInfo.classList.remove('show');
+                        showingInfo = false;
+                    }, 1000);
+                }
+            });
+            
+            // Volume control
+            volumeSlider.addEventListener('input', (e) => {
+                audioPlayer.volume = e.target.value / 100;
+            });
+            
+            // Track navigation
+            prevBtn.addEventListener('click', () => {
+                currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+                loadTrack(currentTrackIndex);
+                if (isPlaying) {
+                    audioPlayer.play().catch(e => console.log('Playback failed:', e));
+                }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+                loadTrack(currentTrackIndex);
+                if (isPlaying) {
+                    audioPlayer.play().catch(e => console.log('Playback failed:', e));
+                }
+            });
+            
+            // Initialize first track
+            loadTrack(0);
         }
         
         // Scroll Reveal Animation
