@@ -746,7 +746,7 @@
             opacity: 0;
             transform: translateX(20px);
             transition: all 0.3s ease;
-            pointer-events: none;
+            pointer-events: auto; /* Changed from none to auto */
         }
 
         .music-info.show {
@@ -778,14 +778,20 @@
             border: 1px solid rgba(0, 212, 255, 0.5);
             border-radius: 5px;
             color: #00d4ff;
-            padding: 5px 10px;
+            padding: 8px 12px; /* Increased padding for better click area */
             cursor: pointer;
             font-size: 0.7rem;
             transition: all 0.3s ease;
+            font-family: 'Orbitron', monospace;
         }
 
         .music-info .track-btn:hover {
             background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.8);
+        }
+
+        .music-info .track-btn:active {
+            background: rgba(0, 212, 255, 0.4);
         }
 
         .volume-control {
@@ -797,20 +803,34 @@
 
         .volume-slider {
             width: 80px;
-            height: 4px;
+            height: 6px; /* Increased height for easier clicking */
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
+            border-radius: 3px;
             outline: none;
             cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
             appearance: none;
-            width: 12px;
-            height: 12px;
+            width: 14px; /* Increased size */
+            height: 14px;
             border-radius: 50%;
             background: #00d4ff;
             cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #00d4ff;
+            cursor: pointer;
+            border: 2px solid #fff;
         }
 
         /* 3D Perspective Effects */
@@ -1524,24 +1544,40 @@
             
             // Volume control
             volumeSlider.addEventListener('input', (e) => {
-                audioPlayer.volume = e.target.value / 100;
+                const volume = e.target.value / 100;
+                audioPlayer.volume = volume;
+                console.log('Volume set to:', volume); // Debug log
+            });
+            
+            // Also handle change event for compatibility
+            volumeSlider.addEventListener('change', (e) => {
+                const volume = e.target.value / 100;
+                audioPlayer.volume = volume;
             });
             
             // Track navigation
-            prevBtn.addEventListener('click', () => {
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Previous track clicked'); // Debug log
                 currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
                 loadTrack(currentTrackIndex);
                 if (isPlaying) {
                     audioPlayer.play().catch(e => console.log('Playback failed:', e));
                 }
+                showMusicInfo(); // Show info when changing tracks
             });
             
-            nextBtn.addEventListener('click', () => {
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Next track clicked'); // Debug log
                 currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
                 loadTrack(currentTrackIndex);
                 if (isPlaying) {
                     audioPlayer.play().catch(e => console.log('Playback failed:', e));
                 }
+                showMusicInfo(); // Show info when changing tracks
             });
             
             // Initialize first track
