@@ -4,105 +4,223 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vincent Hartline - Enhanced Synthwave Portfolio</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="cursor"></div>
-
-    <canvas id="matrixCanvas"></canvas>
-
-    <div id="particles-js" class="particles-js"></div>
-
-    <header class="main-hero">
-        <div class="header-content">
-            <h1 class="reveal">Vincent Hartline</h1>
-            <p class="hero-subtitle reveal">Full-stack Developer & Creative Technologist</p>
+    <div class="cursor" id="cursor"></div>
+    <div class="grid-background" id="gridBackground"></div>
+    <div class="particles" id="particles"></div>
+    <div class="music-toggle" id="musicToggle">
+        <span style="color: #00d4ff; font-size: 20px;">♪</span>
+    </div>
+    <div class="music-info" id="musicInfo">
+        <div class="track-title" id="trackTitle">Orbit</div>
+        <div class="track-artist" id="trackArtist">by d0d</div>
+        <div class="volume-control">
+            <span style="color: #8b5cf6; font-size: 0.7rem;">Vol:</span>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
         </div>
-    </header>
-
-    <main>
-        <section class="section-container about-section reveal">
-            <div class="about-text">
-                <h2>About Me</h2>
-                <p>A passionate developer with a love for building immersive and interactive digital experiences. My work is inspired by the vibrant aesthetics and nostalgic charm of the 80s, combining clean, modern code with a retro-futuristic style. I specialize in front-end development, full-stack applications, and creative coding. When I'm not coding, I'm often experimenting with game development or producing synthwave music.</p>
+        <div class="track-controls">
+            <button class="track-btn" id="prevTrack">◀◀</button>
+            <button class="track-btn" id="nextTrack">▶▶</button>
+            <div style="color: rgba(255,255,255,0.6); font-size: 0.6rem;" id="trackProgress">0:00</div>
+        </div>
+    </div>
+    <audio id="audioPlayer" preload="metadata">
+        <source src="orbit_d0d.mp3" type="audio/mpeg">
+    </audio>
+    <div class="audio-visualizer" id="audioVisualizer">
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+    </div>
+    <div class="hero">
+        <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+        <h1 class="glitch" data-text="Vincent Hartline">Vincent Hartline</h1>
+        <div class="tagline">Software Developer | Entrepreneur</div>
+        <div class="subtitle">Building innovative solutions at the intersection of AI, cybersecurity, and full-stack development</div>
+    </div>
+    <div class="container">
+        <div class="terminal-section reveal">
+            <div class="terminal-header">
+                <div class="terminal-button close"></div>
+                <div class="terminal-button minimize"></div>
+                <div class="terminal-button maximize"></div>
+                <span style="color: #fff; margin-left: 10px;">vincent@portfolio:~$</span>
             </div>
-            <img src="https://via.placeholder.com/400x400.png?text=Vincent+Hartline" alt="Vincent Hartline" class="about-img reveal">
-        </section>
-
-        <div id="games-section-container"></div>
-        
-        <div id="music-section-container"></div>
-
-        <section class="section-container reveal">
-            <h2>Skills & Technologies</h2>
-            <div class="skills-container">
-                <div class="skill-card card-3d">
-                    <h3>Frontend</h3>
-                    <p>React, Vue, Angular</p>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar" style="width: 90%;"></div>
-                    </div>
-                </div>
-                <div class="skill-card card-3d">
-                    <h3>Backend</h3>
-                    <p>Node.js, Python, Django</p>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar" style="width: 85%;"></div>
-                    </div>
-                </div>
-                <div class="skill-card card-3d">
-                    <h3>Creative</h3>
-                    <p>Three.js, Canvas API, WebGL</p>
-                    <div class="skill-bar-container">
-                        <div class="skill-bar" style="width: 95%;"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section-container reveal">
-            <h2>Projects</h2>
-            <div class="project-grid">
-                <div class="project-card card-3d">
-                    <img src="https://via.placeholder.com/300x200.png?text=Project+1" alt="Project 1">
-                    <h3>Project Name 1</h3>
-                    <p>A web-based 3D simulation built with Three.js.</p>
-                </div>
-                <div class="project-card card-3d">
-                    <img src="https://via.placeholder.com/300x200.png?text=Project+2" alt="Project 2">
-                    <h3>Project Name 2</h3>
-                    <p>A full-stack e-commerce platform with a retro UI.</p>
-                </div>
-                <div class="project-card card-3d">
-                    <img src="https://via.placeholder.com/300x200.png?text=Project+3" alt="Project 3">
-                    <h3 class="card-3d">Project Name 3</h3>
-                    <p>A dynamic data visualization tool using the D3.js library.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section-container reveal">
-            <h2>Live Terminal</h2>
-            <div class="terminal">
-                <div id="terminal-output"></div>
+            <div class="terminal-content" id="terminalContent">
                 <div class="terminal-line">
-                    <span class="terminal-prompt">user@synthwave-pc:~$</span> <input type="text" class="terminal-input" autofocus>
+                    <span class="terminal-prompt">vincent@portfolio:~$</span>
+                    <span class="terminal-command"> whoami</span>
+                </div>
+                <div class="terminal-line">
+                    <div class="terminal-output">Full-Stack Developer & Cybersecurity Specialist</div>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">vincent@portfolio:~$</span>
+                    <span class="terminal-command"> cat achievements.txt</span>
+                </div>
+                <div class="terminal-line">
+                    <div class="terminal-output">✓ Led Air Force weather AI project</div>
+                </div>
+                <div class="terminal-line">
+                    <div class="terminal-output">✓ Dual Master's degrees completed</div>
+                </div>
+                <div class="terminal-line">
+                    <div class="terminal-output">✓ PhD in progress</div>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">vincent@portfolio:~$</span>
+                    <span class="terminal-command"> █</span>
                 </div>
             </div>
-        </section>
-
-        <section class="section-container reveal">
-            <h2>Get in Touch</h2>
-            <form class="contact-form">
-                <input type="text" name="name" placeholder="Name" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <textarea name="message" rows="5" placeholder="Message" required></textarea>
-                <button type="submit">Send</button>
-            </form>
-        </section>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="scripts.js"></script>
+        </div>
+        <div class="section-header reveal">
+            <h2 class="section-title">Technical Proficiency</h2>
+            <div class="section-subtitle">Interactive skill assessment</div>
+        </div>
+        <div class="skills-chart reveal">
+            <div class="skill-bar-container">
+                <div class="skill-name">Python Development</div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="95%"></div>
+                </div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skill-name">JavaScript/React</div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="90%"></div>
+                </div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skill-name">AWS/Cloud Services</div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="85%"></div>
+                </div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skill-name">Cybersecurity</div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="88%"></div>
+                </div>
+            </div>
+            <div class="skill-bar-container">
+                <div class="skill-name">AI/Machine Learning</div>
+                <div class="skill-bar">
+                    <div class="skill-progress" data-width="80%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="featured-project holo-card reveal perspective-card">
+            <div class="card-inner">
+                <div class="featured-badge">Featured Work</div>
+                <h2>Project AirStorm</h2>
+                <p>Led full-stack development of an advanced weather visualization application for the <strong>Air Force Global Strike Command</strong>, implementing Google's GraphCast AI model to achieve <strong>90% greater accuracy</strong> than traditional weather forecasting with 16-day prediction capabilities. Deployed using CI/CD pipelines and Docker containerization for military-grade reliability.</p>
+                <div class="featured-links">
+                    <a href="https://www.lsus.edu/lsus-computer-science-students-develop-ai-powered-weather-app-for-air-force" class="featured-link" target="_blank">LSUS Coverage</a>
+                    <a href="https://www.ksla.com/video/2025/05/26/students-build-weather-tech-use-by-air-force" class="featured-link" target="_blank">KSLA News</a>
+                    <a href="https://www.shreveportbossieradvocate.com/business/lsus-shreveport-haughton-air-force-ai-weather-forecasts/article_48366a12-b043-4bbe-a7f8-4a054bc7c847.html" class="featured-link" target="_blank">Advocate Article</a>
+                </div>
+            </div>
+        </div>
+        <div class="section-header reveal">
+            <h2 class="section-title">Experience</h2>
+            <div class="section-subtitle">Professional journey and key achievements</div>
+        </div>
+        <div class="timeline reveal">
+            <div class="timeline-item">
+                <div class="timeline-badge"></div>
+                <div class="timeline-content">
+                    <div class="company">HiTech Computers</div>
+                    <div class="position">L1 Engineer</div>
+                    <div class="period">Sep 2025 - Present</div>
+                    <div class="description">L1 Engineer at managed service provider specializing in comprehensive technical solutions and managed IT services for diverse client portfolios.</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-badge"></div>
+                <div class="timeline-content">
+                    <div class="company">Air Force Global Strike Command</div>
+                    <div class="position">Full-Stack Developer - Project AirStorm</div>
+                    <div class="period">Sep 2024 - May 2025</div>
+                    <div class="description">Led development of weather visualization app using GraphCast AI model. Implemented CI/CD pipelines, Docker containerization, and agile methodologies for military-grade applications.</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-badge"></div>
+                <div class="timeline-content">
+                    <div class="company">Louisiana Tech University</div>
+                    <div class="position">Graduate Research Assistant</div>
+                    <div class="period">Aug 2024 - Present</div>
+                    <div class="description">Researching the application of AI and Machine Learning models to enhance cybersecurity defenses, specifically in a cloud environment.</div>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-badge"></div>
+                <div class="timeline-content">
+                    <div class="company">Louisiana Tech University</div>
+                    <div class="position">Lagniappe Technology Intern</div>
+                    <div class="period">May 2024 - Aug 2024</div>
+                    <div class="description">Developed and maintained front-end applications, managed databases, and provided technical support for student and staff systems.</div>
+                </div>
+            </div>
+        </div>
+        <div class="section-header reveal">
+            <h2 class="section-title">Game System</h2>
+            <div class="section-subtitle">A little interactive fun</div>
+        </div>
+        <div class="games-section holo-card reveal">
+            <div class="game-container">
+                <canvas id="gameCanvas"></canvas>
+            </div>
+            <div class="game-info">
+                <span id="scoreDisplay">Score: 0</span>
+                <span id="levelDisplay">Level: 1</span>
+            </div>
+            <div class="game-controls">
+                <button class="game-btn" id="startGame">Start Game</button>
+                <button class="game-btn" id="resetGame">Restart Game</button>
+            </div>
+            <div class="mobile-controls" id="mobileControls">
+                <button class="mobile-btn" id="mobileLeft">◀</button>
+                <button class="mobile-btn" id="mobileShoot">●</button>
+                <button class="mobile-btn" id="mobileRight">▶</button>
+                <button class="game-btn" id="mobileRestart" style="grid-column: 2 / 3;">Restart Game</button>
+            </div>
+        </div>
+        <div class="section-header reveal">
+            <h2 class="section-title">Contact</h2>
+            <div class="section-subtitle">Let's connect and build something great</div>
+        </div>
+        <div class="contact-section reveal">
+            <p>Connect with me on social platforms or send a direct message.</p>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-label">Email</div>
+                    <div class="contact-value"><a href="mailto:vhartline@outlook.com">vhartline@outlook.com</a></div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-label">LinkedIn</div>
+                    <div class="contact-value"><a href="https://linkedin.com/in/vincen-hartline" target="_blank">vincen-hartline</a></div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-label">GitHub</div>
+                    <div class="contact-value"><a href="https://github.com/vincen-hartline" target="_blank">vincen-hartline</a></div>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-label">Phone</div>
+                    <div class="contact-value"><a href="tel:+13184587849">(318) 458-7849</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
