@@ -277,34 +277,53 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 200px;
-            height: 60px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #00d4ff;
-            border-radius: 10px;
-            padding: 10px;
+            width: 180px;
+            height: 40px;
             display: flex;
             align-items: end;
-            gap: 2px;
+            gap: 3px;
             z-index: 1000;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .audio-visualizer:hover {
+            opacity: 1;
         }
 
         .audio-bar {
             flex: 1;
-            background: linear-gradient(to top, #ff006e, #00d4ff);
+            background: linear-gradient(to top, #ff006e 0%, #8b5cf6 50%, #00d4ff 100%);
             border-radius: 2px;
-            animation: audioWave 1s ease-in-out infinite;
+            height: 4px;
+            transition: height 0.15s ease;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
 
-        .audio-bar:nth-child(1) { animation-delay: 0s; }
-        .audio-bar:nth-child(2) { animation-delay: 0.1s; }
-        .audio-bar:nth-child(3) { animation-delay: 0.2s; }
-        .audio-bar:nth-child(4) { animation-delay: 0.3s; }
-        .audio-bar:nth-child(5) { animation-delay: 0.4s; }
+        .audio-bar.animate {
+            animation: audioWave 0.8s ease-in-out infinite;
+        }
+
+        .audio-bar:nth-child(1).animate { animation-delay: 0s; }
+        .audio-bar:nth-child(2).animate { animation-delay: 0.1s; }
+        .audio-bar:nth-child(3).animate { animation-delay: 0.05s; }
+        .audio-bar:nth-child(4).animate { animation-delay: 0.15s; }
+        .audio-bar:nth-child(5).animate { animation-delay: 0.08s; }
+        .audio-bar:nth-child(6).animate { animation-delay: 0.12s; }
+        .audio-bar:nth-child(7).animate { animation-delay: 0.03s; }
+        .audio-bar:nth-child(8).animate { animation-delay: 0.18s; }
+        .audio-bar:nth-child(9).animate { animation-delay: 0.06s; }
+        .audio-bar:nth-child(10).animate { animation-delay: 0.14s; }
 
         @keyframes audioWave {
-            0%, 100% { height: 10px; }
-            50% { height: 40px; }
+            0%, 100% { 
+                height: 4px; 
+                box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+            }
+            50% { 
+                height: 35px; 
+                box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+            }
         }
         
         /* Container */
@@ -894,6 +913,8 @@
         <div class="audio-bar"></div>
         <div class="audio-bar"></div>
         <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
+        <div class="audio-bar"></div>
     </div>
     
     <div class="hero">
@@ -1254,23 +1275,15 @@
             });
         }
 
-        // Audio Visualizer (Simulated)
+        // Audio Visualizer (Controlled by Music Toggle)
         function initAudioVisualizer() {
-            const bars = document.querySelectorAll('.audio-bar');
-            
-            function animate() {
-                bars.forEach(bar => {
-                    const height = Math.random() * 40 + 10;
-                    bar.style.height = height + 'px';
-                });
-            }
-            
-            setInterval(animate, 150);
+            // Visualizer is now controlled by music toggle, no auto-animation
         }
 
         // Music Toggle
         function initMusicToggle() {
             const toggle = document.getElementById('musicToggle');
+            const bars = document.querySelectorAll('.audio-bar');
             let isPlaying = false;
             
             toggle.addEventListener('click', () => {
@@ -1278,9 +1291,15 @@
                 if (isPlaying) {
                     toggle.classList.add('playing');
                     toggle.innerHTML = '<span style="color: #ff006e; font-size: 20px;">⏸</span>';
+                    
+                    // Start visualizer animation
+                    bars.forEach(bar => bar.classList.add('animate'));
                 } else {
                     toggle.classList.remove('playing');
                     toggle.innerHTML = '<span style="color: #00d4ff; font-size: 20px;">♪</span>';
+                    
+                    // Stop visualizer animation
+                    bars.forEach(bar => bar.classList.remove('animate'));
                 }
             });
         }
