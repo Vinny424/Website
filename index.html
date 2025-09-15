@@ -746,7 +746,7 @@
             opacity: 0;
             transform: translateX(20px);
             transition: all 0.3s ease;
-            pointer-events: auto; /* Changed from none to auto */
+            pointer-events: auto;
         }
 
         .music-info.show {
@@ -778,7 +778,7 @@
             border: 1px solid rgba(0, 212, 255, 0.5);
             border-radius: 5px;
             color: #00d4ff;
-            padding: 8px 12px; /* Increased padding for better click area */
+            padding: 8px 12px;
             cursor: pointer;
             font-size: 0.7rem;
             transition: all 0.3s ease;
@@ -803,7 +803,7 @@
 
         .volume-slider {
             width: 80px;
-            height: 6px; /* Increased height for easier clicking */
+            height: 6px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 3px;
             outline: none;
@@ -815,7 +815,7 @@
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 14px; /* Increased size */
+            width: 14px;
             height: 14px;
             border-radius: 50%;
             background: #00d4ff;
@@ -847,8 +847,8 @@
             transform: rotateY(5deg) rotateX(5deg);
         }
 
-        /* Asteroids Game */
-        .asteroids-section {
+        /* Games Section */
+        .games-section {
             background: linear-gradient(135deg, rgba(255, 0, 110, 0.1), rgba(139, 92, 246, 0.1));
             border-radius: 20px;
             padding: 40px;
@@ -866,7 +866,7 @@
             background: rgba(0, 0, 0, 0.8);
         }
 
-        #asteroidsCanvas {
+        #gameCanvas {
             display: block;
             background: linear-gradient(180deg, #000011 0%, #000033 100%);
         }
@@ -973,11 +973,11 @@
                 display: grid;
             }
             
-            .asteroids-section {
+            .games-section {
                 padding: 20px;
             }
             
-            #asteroidsCanvas {
+            #gameCanvas {
                 width: 100% !important;
                 height: 300px !important;
             }
@@ -1175,18 +1175,24 @@
             </div>
         </div>
         
-        <!-- Asteroids Game Section -->
-        <div class="asteroids-section reveal">
-            <h2 class="section-title">Asteroids</h2>
-            <div class="section-subtitle">In case you get bored</div>
+        <!-- Games Section -->
+        <div class="games-section reveal">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h2 class="section-title" id="gameTitle">Asteroids</h2>
+                    <div class="section-subtitle">In case you get bored</div>
+                </div>
+                <div class="game-btn" id="gameSwapBtn" style="margin: 0;">Switch to Galaga</div>
+            </div>
             
             <div class="game-container">
                 <div class="game-info">
                     <div>Score: <span id="gameScore">0</span></div>
                     <div>Lives: <span id="gameLives">3</span></div>
                     <div>Level: <span id="gameLevel">1</span></div>
+                    <div id="waveInfo" style="display: none;">Wave: <span id="gameWave">1</span></div>
                 </div>
-                <canvas id="asteroidsCanvas" width="800" height="400"></canvas>
+                <canvas id="gameCanvas" width="800" height="400"></canvas>
                 <div class="mobile-controls">
                     <div class="mobile-btn" id="mobileLeft">←</div>
                     <div class="mobile-btn" id="mobileThrust">↑</div>
@@ -1203,7 +1209,7 @@
                 <div class="game-btn" id="resetGame">Reset</div>
             </div>
             
-            <div style="margin-top: 20px; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
+            <div style="margin-top: 20px; color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;" id="gameInstructions">
                 <strong>Controls:</strong> Arrow Keys (Move) | Spacebar (Shoot) | Enter (Start/Pause)
             </div>
         </div>
@@ -1727,7 +1733,6 @@
             volumeSlider.addEventListener('input', (e) => {
                 const volume = e.target.value / 100;
                 audioPlayer.volume = volume;
-                console.log('Volume set to:', volume); // Debug log
             });
             
             // Also handle change event for compatibility
@@ -1740,7 +1745,6 @@
             prevBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Previous track clicked'); // Debug log
                 currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
                 loadTrack(currentTrackIndex);
                 if (isPlaying) {
@@ -1752,7 +1756,6 @@
             nextBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Next track clicked'); // Debug log
                 currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
                 loadTrack(currentTrackIndex);
                 if (isPlaying) {
@@ -1814,60 +1817,62 @@
             });
         }
 
-        // Initialize everything
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if device supports advanced features
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (!isMobile) {
-                initCursor();
-                initMatrix();
-                initParticles();
-            }
-            
-            initGrid();
-            initTerminal();
-            initSkillsChart();
-            initAudioVisualizer();
-            initMusicToggle();
-            initScrollReveal();
-            init3DCards();
-            initAsteroidsGame();
-        });
-
-        // Asteroids Game
-        function initAsteroidsGame() {
-            const canvas = document.getElementById('asteroidsCanvas');
+        // Game System with Asteroids and Galaga
+        function initGameSystem() {
+            const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Game state
+            // Game type selection
+            let currentGame = 'asteroids'; // 'asteroids' or 'galaga'
+            
+            // Common game state
             let gameState = 'menu'; // menu, playing, paused, gameOver
             let score = 0;
             let lives = 3;
             let level = 1;
+            let wave = 1;
             
-            // Game objects
+            // Common game objects
             let ship;
             let bullets = [];
-            let asteroids = [];
+            let enemies = [];
+            let enemyBullets = [];
             let particles = [];
+            let powerUps = [];
             
             // Controls
             let keys = {};
+            let lastShot = 0;
             
-            // Ship class
+            // Base Ship class
             class Ship {
-                constructor(x, y) {
+                constructor(x, y, gameType) {
                     this.x = x;
                     this.y = y;
-                    this.angle = 0;
-                    this.velocity = { x: 0, y: 0 };
+                    this.gameType = gameType;
                     this.radius = 10;
-                    this.thrust = false;
+                    this.velocity = { x: 0, y: 0 };
                     this.invulnerable = 0;
+                    
+                    if (gameType === 'asteroids') {
+                        this.angle = 0;
+                        this.thrust = false;
+                    } else {
+                        this.speed = 5;
+                    }
                 }
                 
                 update() {
+                    if (this.gameType === 'asteroids') {
+                        this.updateAsteroids();
+                    } else {
+                        this.updateGalaga();
+                    }
+                    
+                    if (this.invulnerable > 0) this.invulnerable--;
+                }
+                
+                updateAsteroids() {
                     // Rotation
                     if (keys['ArrowLeft']) this.angle -= 0.1;
                     if (keys['ArrowRight']) this.angle += 0.1;
@@ -1890,16 +1895,35 @@
                     this.y += this.velocity.y;
                     
                     // Wrap around screen
+                    this.wrapScreen();
+                }
+                
+                updateGalaga() {
+                    // Horizontal movement only
+                    if (keys['ArrowLeft'] && this.x > 20) {
+                        this.x -= this.speed;
+                    }
+                    if (keys['ArrowRight'] && this.x < canvas.width - 20) {
+                        this.x += this.speed;
+                    }
+                }
+                
+                wrapScreen() {
                     if (this.x < 0) this.x = canvas.width;
                     if (this.x > canvas.width) this.x = 0;
                     if (this.y < 0) this.y = canvas.height;
                     if (this.y > canvas.height) this.y = 0;
-                    
-                    // Update invulnerability
-                    if (this.invulnerable > 0) this.invulnerable--;
                 }
                 
                 draw() {
+                    if (this.gameType === 'asteroids') {
+                        this.drawAsteroids();
+                    } else {
+                        this.drawGalaga();
+                    }
+                }
+                
+                drawAsteroids() {
                     ctx.save();
                     ctx.translate(this.x, this.y);
                     ctx.rotate(this.angle);
@@ -1937,23 +1961,79 @@
                     ctx.restore();
                 }
                 
+                drawGalaga() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    
+                    // Ship color based on invulnerability
+                    if (this.invulnerable % 10 < 5) {
+                        ctx.strokeStyle = '#00d4ff';
+                        ctx.fillStyle = 'rgba(0, 212, 255, 0.2)';
+                    } else {
+                        ctx.strokeStyle = 'rgba(0, 212, 255, 0.5)';
+                        ctx.fillStyle = 'transparent';
+                    }
+                    
+                    ctx.lineWidth = 2;
+                    
+                    // Draw Galaga-style ship
+                    ctx.beginPath();
+                    ctx.moveTo(0, -12);
+                    ctx.lineTo(-8, 8);
+                    ctx.lineTo(-4, 6);
+                    ctx.lineTo(0, 2);
+                    ctx.lineTo(4, 6);
+                    ctx.lineTo(8, 8);
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill();
+                    
+                    // Wings
+                    ctx.strokeStyle = '#8b5cf6';
+                    ctx.beginPath();
+                    ctx.moveTo(-8, 0);
+                    ctx.lineTo(-12, 4);
+                    ctx.moveTo(8, 0);
+                    ctx.lineTo(12, 4);
+                    ctx.stroke();
+                    
+                    ctx.restore();
+                }
+                
                 shoot() {
-                    bullets.push(new Bullet(
-                        this.x + Math.cos(this.angle) * 15,
-                        this.y + Math.sin(this.angle) * 15,
-                        Math.cos(this.angle) * 7 + this.velocity.x,
-                        Math.sin(this.angle) * 7 + this.velocity.y
-                    ));
+                    const now = Date.now();
+                    if (now - lastShot < 150) return; // Rate limit
+                    lastShot = now;
+                    
+                    if (this.gameType === 'asteroids') {
+                        bullets.push(new Bullet(
+                            this.x + Math.cos(this.angle) * 15,
+                            this.y + Math.sin(this.angle) * 15,
+                            Math.cos(this.angle) * 7 + this.velocity.x,
+                            Math.sin(this.angle) * 7 + this.velocity.y,
+                            'player'
+                        ));
+                    } else {
+                        bullets.push(new Bullet(
+                            this.x,
+                            this.y - 15,
+                            0,
+                            -8,
+                            'player'
+                        ));
+                    }
                 }
             }
             
             // Bullet class
             class Bullet {
-                constructor(x, y, vx, vy) {
+                constructor(x, y, vx, vy, owner) {
                     this.x = x;
                     this.y = y;
                     this.velocity = { x: vx, y: vy };
-                    this.life = 100;
+                    this.life = currentGame === 'asteroids' ? 100 : 120;
+                    this.owner = owner;
+                    this.radius = 2;
                 }
                 
                 update() {
@@ -1961,22 +2041,31 @@
                     this.y += this.velocity.y;
                     this.life--;
                     
-                    // Wrap around screen
-                    if (this.x < 0) this.x = canvas.width;
-                    if (this.x > canvas.width) this.x = 0;
-                    if (this.y < 0) this.y = canvas.height;
-                    if (this.y > canvas.height) this.y = 0;
+                    if (currentGame === 'asteroids') {
+                        // Wrap around screen for asteroids
+                        if (this.x < 0) this.x = canvas.width;
+                        if (this.x > canvas.width) this.x = 0;
+                        if (this.y < 0) this.y = canvas.height;
+                        if (this.y > canvas.height) this.y = 0;
+                    }
                 }
                 
                 draw() {
-                    ctx.fillStyle = '#ff006e';
+                    ctx.fillStyle = this.owner === 'player' ? '#ff006e' : '#ff6b00';
                     ctx.beginPath();
-                    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                     ctx.fill();
+                    
+                    // Add glow effect
+                    ctx.shadowColor = this.owner === 'player' ? '#ff006e' : '#ff6b00';
+                    ctx.shadowBlur = 5;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
                 }
                 
                 isDead() {
-                    return this.life <= 0;
+                    return this.life <= 0 || 
+                           (currentGame === 'galaga' && (this.y < 0 || this.y > canvas.height));
                 }
             }
             
@@ -2051,6 +2140,224 @@
                 }
             }
             
+            // Enemy class for Galaga
+            class Enemy {
+                constructor(x, y, type) {
+                    this.x = x;
+                    this.y = y;
+                    this.startX = x;
+                    this.startY = y;
+                    this.type = type; // 'grunt', 'elite', 'boss'
+                    this.radius = type === 'boss' ? 15 : 12;
+                    this.health = type === 'boss' ? 3 : (type === 'elite' ? 2 : 1);
+                    this.maxHealth = this.health;
+                    this.formation = true;
+                    this.diving = false;
+                    this.shootTimer = Math.random() * 180;
+                    this.animFrame = 0;
+                    this.divePath = [];
+                    this.pathIndex = 0;
+                    
+                    // Formation movement
+                    this.formationOffset = { x: 0, y: 0 };
+                    this.formationSpeed = 0.5;
+                    this.formationDirection = 1;
+                }
+                
+                update() {
+                    this.animFrame++;
+                    
+                    if (this.formation) {
+                        // Formation flying
+                        this.formationOffset.x += this.formationSpeed * this.formationDirection;
+                        if (Math.abs(this.formationOffset.x) > 50) {
+                            this.formationDirection *= -1;
+                            this.formationOffset.y += 10;
+                        }
+                        
+                        this.x = this.startX + this.formationOffset.x;
+                        this.y = this.startY + this.formationOffset.y;
+                        
+                        // Randomly start diving
+                        if (Math.random() < 0.002 && this.y > 50) {
+                            this.startDive();
+                        }
+                    } else if (this.diving) {
+                        // Diving attack
+                        if (this.pathIndex < this.divePath.length) {
+                            const target = this.divePath[this.pathIndex];
+                            const dx = target.x - this.x;
+                            const dy = target.y - this.y;
+                            const dist = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (dist < 5) {
+                                this.pathIndex++;
+                            } else {
+                                this.x += (dx / dist) * 3;
+                                this.y += (dy / dist) * 3;
+                            }
+                        } else {
+                            // Return to formation
+                            this.returnToFormation();
+                        }
+                    }
+                    
+                    // Shooting
+                    this.shootTimer--;
+                    if (this.shootTimer <= 0 && this.y < canvas.height - 50) {
+                        this.shoot();
+                        this.shootTimer = 60 + Math.random() * 120;
+                    }
+                }
+                
+                startDive() {
+                    this.formation = false;
+                    this.diving = true;
+                    this.pathIndex = 0;
+                    
+                    // Create dive path
+                    this.divePath = [];
+                    const shipX = ship.x;
+                    
+                    // Curved dive towards player
+                    for (let i = 0; i < 20; i++) {
+                        const t = i / 19;
+                        const x = this.x + (shipX - this.x) * t + Math.sin(t * Math.PI * 2) * 100;
+                        const y = this.y + (canvas.height * 0.8 - this.y) * t;
+                        this.divePath.push({ x, y });
+                    }
+                    
+                    // Loop back up
+                    for (let i = 0; i < 15; i++) {
+                        const t = i / 14;
+                        const x = shipX + Math.sin(t * Math.PI) * 150;
+                        const y = canvas.height * 0.8 - t * canvas.height * 0.6;
+                        this.divePath.push({ x, y });
+                    }
+                }
+                
+                returnToFormation() {
+                    const dx = this.startX - this.x;
+                    const dy = this.startY - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (dist < 5) {
+                        this.formation = true;
+                        this.diving = false;
+                        this.x = this.startX;
+                        this.y = this.startY;
+                    } else {
+                        this.x += (dx / dist) * 2;
+                        this.y += (dy / dist) * 2;
+                    }
+                }
+                
+                shoot() {
+                    if (this.diving || Math.random() < 0.3) {
+                        enemyBullets.push(new Bullet(
+                            this.x,
+                            this.y + 10,
+                            (ship.x - this.x) * 0.05,
+                            2 + Math.random(),
+                            'enemy'
+                        ));
+                    }
+                }
+                
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    
+                    // Color based on type and health
+                    let color = '#8b5cf6';
+                    if (this.type === 'elite') color = '#ff006e';
+                    if (this.type === 'boss') color = '#00d4ff';
+                    
+                    // Flash when damaged
+                    if (this.health < this.maxHealth && this.animFrame % 10 < 5) {
+                        color = '#ffffff';
+                    }
+                    
+                    ctx.strokeStyle = color;
+                    ctx.fillStyle = color.replace(')', ', 0.2)').replace('rgb', 'rgba');
+                    ctx.lineWidth = 2;
+                    
+                    // Draw enemy based on type
+                    if (this.type === 'grunt') {
+                        this.drawGrunt();
+                    } else if (this.type === 'elite') {
+                        this.drawElite();
+                    } else {
+                        this.drawBoss();
+                    }
+                    
+                    ctx.restore();
+                }
+                
+                drawGrunt() {
+                    ctx.beginPath();
+                    ctx.moveTo(0, -8);
+                    ctx.lineTo(-6, 4);
+                    ctx.lineTo(-3, 6);
+                    ctx.lineTo(0, 4);
+                    ctx.lineTo(3, 6);
+                    ctx.lineTo(6, 4);
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill();
+                }
+                
+                drawElite() {
+                    ctx.beginPath();
+                    ctx.moveTo(0, -10);
+                    ctx.lineTo(-8, 2);
+                    ctx.lineTo(-4, 8);
+                    ctx.lineTo(0, 6);
+                    ctx.lineTo(4, 8);
+                    ctx.lineTo(8, 2);
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill();
+                    
+                    // Extra details
+                    ctx.beginPath();
+                    ctx.moveTo(-8, 2);
+                    ctx.lineTo(-10, 0);
+                    ctx.moveTo(8, 2);
+                    ctx.lineTo(10, 0);
+                    ctx.stroke();
+                }
+                
+                drawBoss() {
+                    // Main body
+                    ctx.beginPath();
+                    ctx.moveTo(0, -12);
+                    ctx.lineTo(-10, 0);
+                    ctx.lineTo(-8, 10);
+                    ctx.lineTo(0, 8);
+                    ctx.lineTo(8, 10);
+                    ctx.lineTo(10, 0);
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill();
+                    
+                    // Wings
+                    ctx.beginPath();
+                    ctx.moveTo(-10, 0);
+                    ctx.lineTo(-15, -2);
+                    ctx.lineTo(-12, 6);
+                    ctx.moveTo(10, 0);
+                    ctx.lineTo(15, -2);
+                    ctx.lineTo(12, 6);
+                    ctx.stroke();
+                }
+                
+                takeDamage() {
+                    this.health--;
+                    return this.health <= 0;
+                }
+            }
+            
             // Particle class
             class Particle {
                 constructor(x, y, vx, vy, color, life) {
@@ -2083,14 +2390,26 @@
                 }
             }
             
-            // Initialize game
+            // Initialize game based on type
             function initGame() {
-                ship = new Ship(canvas.width / 2, canvas.height / 2);
+                ship = new Ship(canvas.width / 2, 
+                    currentGame === 'asteroids' ? canvas.height / 2 : canvas.height - 40,
+                    currentGame);
                 bullets = [];
-                asteroids = [];
+                enemies = [];
+                enemyBullets = [];
                 particles = [];
+                powerUps = [];
                 
-                // Create initial asteroids
+                if (currentGame === 'asteroids') {
+                    initAsteroids();
+                } else {
+                    initGalaga();
+                }
+            }
+            
+            function initAsteroids() {
+                enemies = []; // Clear enemies array for asteroids (using for asteroids)
                 for (let i = 0; i < 5 + level; i++) {
                     let x, y;
                     do {
@@ -2098,7 +2417,29 @@
                         y = Math.random() * canvas.height;
                     } while (distance(x, y, ship.x, ship.y) < 100);
                     
-                    asteroids.push(new Asteroid(x, y, 3));
+                    enemies.push(new Asteroid(x, y, 3));
+                }
+            }
+            
+            function initGalaga() {
+                enemies = [];
+                const rows = 4;
+                const cols = 8;
+                const startX = canvas.width / 2 - (cols * 40) / 2;
+                const startY = 80;
+                
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
+                        let type = 'grunt';
+                        if (row === 0 && (col === 3 || col === 4)) type = 'boss';
+                        else if (row <= 1) type = 'elite';
+                        
+                        enemies.push(new Enemy(
+                            startX + col * 40,
+                            startY + row * 35,
+                            type
+                        ));
+                    }
                 }
             }
             
@@ -2117,8 +2458,14 @@
                         return !bullet.isDead();
                     });
                     
-                    // Update asteroids
-                    asteroids.forEach(asteroid => asteroid.update());
+                    // Update enemy bullets
+                    enemyBullets = enemyBullets.filter(bullet => {
+                        bullet.update();
+                        return !bullet.isDead();
+                    });
+                    
+                    // Update enemies
+                    enemies.forEach(enemy => enemy.update());
                     
                     // Update particles
                     particles = particles.filter(particle => {
@@ -2132,12 +2479,14 @@
                     // Draw everything
                     ship.draw();
                     bullets.forEach(bullet => bullet.draw());
-                    asteroids.forEach(asteroid => asteroid.draw());
+                    enemyBullets.forEach(bullet => bullet.draw());
+                    enemies.forEach(enemy => enemy.draw());
                     particles.forEach(particle => particle.draw());
                     
                     // Check win condition
-                    if (asteroids.length === 0) {
+                    if (enemies.length === 0) {
                         level++;
+                        if (currentGame === 'galaga') wave++;
                         initGame();
                     }
                     
@@ -2146,7 +2495,7 @@
                     ctx.fillStyle = '#00d4ff';
                     ctx.font = '32px Orbitron';
                     ctx.textAlign = 'center';
-                    ctx.fillText('ASTEROIDS', canvas.width / 2, canvas.height / 2 - 50);
+                    ctx.fillText(currentGame.toUpperCase(), canvas.width / 2, canvas.height / 2 - 50);
                     
                     ctx.font = '16px Rajdhani';
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
@@ -2158,69 +2507,92 @@
             
             // Collision detection
             function checkCollisions() {
-                // Bullet vs Asteroid
+                // Player bullets vs enemies
                 for (let i = bullets.length - 1; i >= 0; i--) {
-                    for (let j = asteroids.length - 1; j >= 0; j--) {
-                        if (distance(bullets[i].x, bullets[i].y, asteroids[j].x, asteroids[j].y) < asteroids[j].radius) {
+                    for (let j = enemies.length - 1; j >= 0; j--) {
+                        if (distance(bullets[i].x, bullets[i].y, enemies[j].x, enemies[j].y) < 
+                            (enemies[j].radius || enemies[j].radius)) {
+                            
                             // Create explosion particles
-                            for (let k = 0; k < 8; k++) {
-                                particles.push(new Particle(
-                                    asteroids[j].x,
-                                    asteroids[j].y,
-                                    (Math.random() - 0.5) * 6,
-                                    (Math.random() - 0.5) * 6,
-                                    'rgba(139, 92, 246, 1)',
-                                    30
-                                ));
+                            createExplosion(enemies[j].x, enemies[j].y, enemies[j].type ? '#8b5cf6' : '#8b5cf6');
+                            
+                            if (currentGame === 'asteroids') {
+                                // Split asteroid
+                                const newAsteroids = enemies[j].split();
+                                enemies.splice(j, 1);
+                                enemies.push(...newAsteroids);
+                                score += (4 - (enemies[j]?.size || 1)) * 10;
+                            } else {
+                                // Damage enemy
+                                if (enemies[j].takeDamage()) {
+                                    score += enemies[j].type === 'boss' ? 300 : 
+                                            (enemies[j].type === 'elite' ? 150 : 100);
+                                    enemies.splice(j, 1);
+                                } else {
+                                    score += 50; // Hit bonus
+                                }
                             }
                             
-                            // Split asteroid
-                            const newAsteroids = asteroids[j].split();
-                            asteroids.splice(j, 1);
-                            asteroids.push(...newAsteroids);
-                            
-                            // Remove bullet
                             bullets.splice(i, 1);
-                            
-                            // Update score
-                            score += (4 - asteroids[j]?.size || 1) * 10;
                             updateUI();
                             break;
                         }
                     }
                 }
                 
-                // Ship vs Asteroid
-                if (ship.invulnerable === 0) {
-                    for (let i = 0; i < asteroids.length; i++) {
-                        if (distance(ship.x, ship.y, asteroids[i].x, asteroids[i].y) < asteroids[i].radius + ship.radius) {
-                            // Ship hit
-                            lives--;
-                            ship.invulnerable = 120;
-                            ship.x = canvas.width / 2;
-                            ship.y = canvas.height / 2;
-                            ship.velocity = { x: 0, y: 0 };
-                            
-                            // Create explosion particles
-                            for (let k = 0; k < 15; k++) {
-                                particles.push(new Particle(
-                                    ship.x,
-                                    ship.y,
-                                    (Math.random() - 0.5) * 8,
-                                    (Math.random() - 0.5) * 8,
-                                    'rgba(0, 212, 255, 1)',
-                                    40
-                                ));
-                            }
-                            
-                            updateUI();
-                            
-                            if (lives <= 0) {
-                                gameState = 'gameOver';
-                            }
+                // Enemy bullets vs player
+                for (let i = enemyBullets.length - 1; i >= 0; i--) {
+                    if (ship.invulnerable === 0 && 
+                        distance(enemyBullets[i].x, enemyBullets[i].y, ship.x, ship.y) < ship.radius + 5) {
+                        hitPlayer();
+                        enemyBullets.splice(i, 1);
+                        break;
+                    }
+                }
+                
+                // Ship vs enemies (only for asteroids)
+                if (currentGame === 'asteroids' && ship.invulnerable === 0) {
+                    for (let i = 0; i < enemies.length; i++) {
+                        if (distance(ship.x, ship.y, enemies[i].x, enemies[i].y) < 
+                            enemies[i].radius + ship.radius) {
+                            hitPlayer();
                             break;
                         }
                     }
+                }
+            }
+            
+            function hitPlayer() {
+                lives--;
+                ship.invulnerable = 120;
+                
+                if (currentGame === 'asteroids') {
+                    ship.x = canvas.width / 2;
+                    ship.y = canvas.height / 2;
+                    ship.velocity = { x: 0, y: 0 };
+                } else {
+                    ship.x = canvas.width / 2;
+                }
+                
+                createExplosion(ship.x, ship.y, '#00d4ff');
+                
+                updateUI();
+                
+                if (lives <= 0) {
+                    gameState = 'gameOver';
+                }
+            }
+            
+            function createExplosion(x, y, color) {
+                for (let k = 0; k < 15; k++) {
+                    particles.push(new Particle(
+                        x,
+                        y,
+                        (Math.random() - 0.5) * 8,
+                        (Math.random() - 0.5) * 8,
+                        color.includes('rgba') ? color : `rgba(${color.slice(1).match(/.{2}/g).map(h => parseInt(h, 16)).join(', ')}, 1)`,
+                        40
+                    ));
                 }
             }
             
@@ -2233,6 +2605,59 @@
                 document.getElementById('gameScore').textContent = score;
                 document.getElementById('gameLives').textContent = lives;
                 document.getElementById('gameLevel').textContent = level;
+                document.getElementById('gameWave').textContent = wave;
+            }
+            
+            // Game controls
+            function startGame() {
+                score = 0;
+                lives = 3;
+                level = 1;
+                wave = 1;
+                gameState = 'playing';
+                initGame();
+                updateUI();
+            }
+            
+            function pauseGame() {
+                gameState = 'paused';
+            }
+            
+            function resumeGame() {
+                gameState = 'playing';
+            }
+            
+            function resetGame() {
+                gameState = 'menu';
+                score = 0;
+                lives = 3;
+                level = 1;
+                wave = 1;
+                updateUI();
+            }
+            
+            function swapGame() {
+                currentGame = currentGame === 'asteroids' ? 'galaga' : 'asteroids';
+                
+                // Update UI elements
+                const gameTitle = document.getElementById('gameTitle');
+                const gameSwapBtn = document.getElementById('gameSwapBtn');
+                const waveInfo = document.getElementById('waveInfo');
+                const instructions = document.getElementById('gameInstructions');
+                
+                if (currentGame === 'galaga') {
+                    gameTitle.textContent = 'Galaga';
+                    gameSwapBtn.textContent = 'Switch to Asteroids';
+                    waveInfo.style.display = 'block';
+                    instructions.innerHTML = '<strong>Controls:</strong> Left/Right Arrow Keys (Move) | Spacebar (Shoot) | Enter (Start/Pause)';
+                } else {
+                    gameTitle.textContent = 'Asteroids';
+                    gameSwapBtn.textContent = 'Switch to Galaga';
+                    waveInfo.style.display = 'none';
+                    instructions.innerHTML = '<strong>Controls:</strong> Arrow Keys (Move) | Spacebar (Shoot) | Enter (Start/Pause)';
+                }
+                
+                resetGame();
             }
             
             // Event listeners
@@ -2276,32 +2701,6 @@
                 keys[e.code] = false;
             });
             
-            // Game controls
-            function startGame() {
-                score = 0;
-                lives = 3;
-                level = 1;
-                gameState = 'playing';
-                initGame();
-                updateUI();
-            }
-            
-            function pauseGame() {
-                gameState = 'paused';
-            }
-            
-            function resumeGame() {
-                gameState = 'playing';
-            }
-            
-            function resetGame() {
-                gameState = 'menu';
-                score = 0;
-                lives = 3;
-                level = 1;
-                updateUI();
-            }
-            
             // Button event listeners
             document.getElementById('startGame').addEventListener('click', startGame);
             document.getElementById('pauseGame').addEventListener('click', () => {
@@ -2312,6 +2711,7 @@
                 }
             });
             document.getElementById('resetGame').addEventListener('click', resetGame);
+            document.getElementById('gameSwapBtn').addEventListener('click', swapGame);
             
             // Mobile controls
             document.getElementById('mobileLeft').addEventListener('touchstart', () => keys['ArrowLeft'] = true);
@@ -2335,9 +2735,31 @@
                 btn.addEventListener('touchend', (e) => e.preventDefault());
             });
             
-            // Start the game loop
+            // Initialize with asteroids
+            updateUI();
             gameLoop();
         }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if device supports advanced features
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (!isMobile) {
+                initCursor();
+                initMatrix();
+                initParticles();
+            }
+            
+            initGrid();
+            initTerminal();
+            initSkillsChart();
+            initAudioVisualizer();
+            initMusicToggle();
+            initScrollReveal();
+            init3DCards();
+            initGameSystem();
+        });
 
         // Handle window resize
         window.addEventListener('resize', () => {
