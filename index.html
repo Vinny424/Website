@@ -1440,37 +1440,105 @@
                 // Get frequency data
                 analyser.getByteFrequencyData(dataArray);
                 
-                // Map frequency data to bars
                 const barCount = bars.length;
-                const step = Math.floor(dataArray.length / barCount);
+                const sampleRate = audioContext.sampleRate;
+                const nyquist = sampleRate / 2;
+                const binWidth = nyquist / dataArray.length;
+                
+                // Define frequency ranges for better musical representation
+                const bassRange = { min: 0, max: 250 };      // Bass: 0-250 Hz
+                const midRange = { min: 250, max: 4000 };    // Mids: 250-4000 Hz  
+                const highRange = { min: 4000, max: 20000 }; // Highs: 4000+ Hz
+                
+                // Calculate which bars represent which frequency ranges
+                const bassBarCount = Math.ceil(barCount * 0.3);  // 30% for bass
+                const midBarCount = Math.ceil(barCount * 0.4);   // 40% for mids
+                const highBarCount = barCount - bassBarCount - midBarCount; // 30% for highs
                 
                 bars.forEach((bar, index) => {
-                    // Get average amplitude for this frequency range
-                    let sum = 0;
-                    const start = index * step;
-                    const end = start + step;
+                    let value = 0;
+                    let sensitivity = 1;
                     
-                    for (let i = start; i < end && i < dataArray.length; i++) {
-                        sum += dataArray[i];
+                    if (index < bassBarCount) {
+                        // Bass frequencies (left side)
+                        const bassStart = Math.floor(bassRange.min / binWidth);
+                        const bassEnd = Math.floor(bassRange.max / binWidth);
+                        const bassWidth = bassEnd - bassStart;
+                        const bassStep = bassWidth / bassBarCount;
+                        const startBin = Math.floor(bassStart + (index * bassStep));
+                        const endBin = Math.floor(startBin + bassStep);
+                        
+                        // Average the bass range
+                        let sum = 0;
+                        let count = 0;
+                        for (let i = startBin; i < endBin && i < dataArray.length; i++) {
+                            sum += dataArray[i];
+                            count++;
+                        }
+                        value = count > 0 ? sum / count : 0;
+                        sensitivity = 0.8; // Slightly reduce bass sensitivity
+                        
+                    } else if (index < bassBarCount + midBarCount) {
+                        // Mid frequencies (middle)
+                        const midStart = Math.floor(midRange.min / binWidth);
+                        const midEnd = Math.floor(midRange.max / binWidth);
+                        const midWidth = midEnd - midStart;
+                        const midStep = midWidth / midBarCount;
+                        const midIndex = index - bassBarCount;
+                        const startBin = Math.floor(midStart + (midIndex * midStep));
+                        const endBin = Math.floor(startBin + midStep);
+                        
+                        // Average the mid range
+                        let sum = 0;
+                        let count = 0;
+                        for (let i = startBin; i < endBin && i < dataArray.length; i++) {
+                            sum += dataArray[i];
+                            count++;
+                        }
+                        value = count > 0 ? sum / count : 0;
+                        sensitivity = 1.0; // Normal sensitivity for mids
+                        
+                    } else {
+                        // High frequencies (right side)
+                        const highStart = Math.floor(highRange.min / binWidth);
+                        const highEnd = Math.min(dataArray.length, Math.floor(highRange.max / binWidth));
+                        const highWidth = highEnd - highStart;
+                        const highStep = highWidth / highBarCount;
+                        const highIndex = index - bassBarCount - midBarCount;
+                        const startBin = Math.floor(highStart + (highIndex * highStep));
+                        const endBin = Math.floor(startBin + highStep);
+                        
+                        // Average the high range
+                        let sum = 0;
+                        let count = 0;
+                        for (let i = startBin; i < endBin && i < dataArray.length; i++) {
+                            sum += dataArray[i];
+                            count++;
+                        }
+                        value = count > 0 ? sum / count : 0;
+                        sensitivity = 1.8; // Boost high frequency sensitivity for synthwave
                     }
                     
-                    const average = sum / step;
-                    
-                    // Convert to height (4px minimum, up to 35px maximum)
-                    const height = Math.max(4, (average / 255) * 35);
+                    // Apply sensitivity and convert to height
+                    const amplifiedValue = Math.min(255, value * sensitivity);
+                    const height = Math.max(4, (amplifiedValue / 255) * 35);
                     
                     // Apply smoothing for more natural movement
                     const currentHeight = parseFloat(bar.style.height) || 4;
-                    const smoothedHeight = currentHeight + (height - currentHeight) * 0.3;
+                    const smoothedHeight = currentHeight + (height - currentHeight) * 0.4;
                     
                     bar.style.height = `${smoothedHeight}px`;
                     
-                    // Add extra glow effect for high frequencies
-                    if (average > 150) {
-                        bar.style.boxShadow = `0 0 ${Math.min(20, average / 10)}px rgba(0, 212, 255, 0.8)`;
-                    } else {
-                        bar.style.boxShadow = '0 0 10px rgba(0, 212, 255, 0.3)';
+                    // Enhanced glow effect - especially for highs
+                    let glowIntensity = amplifiedValue / 255;
+                    if (index >= bassBarCount + midBarCount) {
+                        // Extra glow for high frequencies
+                        glowIntensity *= 1.3;
                     }
+                    
+                    const glowSize = Math.min(25, 10 + (glowIntensity * 15));
+                    const glowOpacity = Math.min(1, 0.3 + (glowIntensity * 0.5));
+                    bar.style.boxShadow = `0 0 ${glowSize}px rgba(0, 212, 255, ${glowOpacity})`;
                 });
                 
                 animationId = requestAnimationFrame(animate);
