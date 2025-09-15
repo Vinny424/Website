@@ -1398,9 +1398,100 @@
             });
         }
 
-        // Audio Visualizer (Controlled by Music Toggle)
-        function initAudioVisualizer() {
-            // Visualizer is now controlled by music toggle, no auto-animation
+        // Audio Visualizer with Real-Time Analysis
+        let audioContext = null;
+        let analyser = null;
+        let dataArray = null;
+        let animationId = null;
+
+        function initAudioVisualizer(audioElement) {
+            const bars = document.querySelectorAll('.audio-bar');
+            
+            // Create audio context and analyser
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                
+                // Configure analyser
+                analyser.fftSize = 64; // Small for better performance, gives us 32 frequency bins
+                analyser.smoothingTimeConstant = 0.8;
+                
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                // Connect audio element to analyser
+                const source = audioContext.createMediaElementSource(audioElement);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                
+                return true;
+            } catch (error) {
+                console.log('Web Audio API not supported:', error);
+                return false;
+            }
+        }
+
+        function startVisualizer() {
+            if (!analyser || !dataArray) return;
+            
+            const bars = document.querySelectorAll('.audio-bar');
+            
+            function animate() {
+                // Get frequency data
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Map frequency data to bars
+                const barCount = bars.length;
+                const step = Math.floor(dataArray.length / barCount);
+                
+                bars.forEach((bar, index) => {
+                    // Get average amplitude for this frequency range
+                    let sum = 0;
+                    const start = index * step;
+                    const end = start + step;
+                    
+                    for (let i = start; i < end && i < dataArray.length; i++) {
+                        sum += dataArray[i];
+                    }
+                    
+                    const average = sum / step;
+                    
+                    // Convert to height (4px minimum, up to 35px maximum)
+                    const height = Math.max(4, (average / 255) * 35);
+                    
+                    // Apply smoothing for more natural movement
+                    const currentHeight = parseFloat(bar.style.height) || 4;
+                    const smoothedHeight = currentHeight + (height - currentHeight) * 0.3;
+                    
+                    bar.style.height = `${smoothedHeight}px`;
+                    
+                    // Add extra glow effect for high frequencies
+                    if (average > 150) {
+                        bar.style.boxShadow = `0 0 ${Math.min(20, average / 10)}px rgba(0, 212, 255, 0.8)`;
+                    } else {
+                        bar.style.boxShadow = '0 0 10px rgba(0, 212, 255, 0.3)';
+                    }
+                });
+                
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        function stopVisualizer() {
+            const bars = document.querySelectorAll('.audio-bar');
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            // Reset bars to minimum height
+            bars.forEach(bar => {
+                bar.style.height = '4px';
+                bar.style.boxShadow = '0 0 10px rgba(0, 212, 255, 0.3)';
+            });
         }
 
         // Music Player System
@@ -1419,6 +1510,7 @@
             let isPlaying = false;
             let currentTrackIndex = 0;
             let showingInfo = false;
+            let audioInitialized = false;
             
             // Music playlist
             const playlist = [
@@ -1476,6 +1568,33 @@
             // Progress tracking
             audioPlayer.addEventListener('timeupdate', updateProgress);
             
+            // Audio started playing
+            audioPlayer.addEventListener('play', () => {
+                // Initialize audio analysis on first play
+                if (!audioInitialized) {
+                    audioInitialized = initAudioVisualizer(audioPlayer);
+                    
+                    // Resume audio context if it was suspended
+                    if (audioContext && audioContext.state === 'suspended') {
+                        audioContext.resume();
+                    }
+                }
+                
+                // Start real-time visualizer
+                if (audioInitialized) {
+                    startVisualizer();
+                } else {
+                    // Fallback to CSS animation if Web Audio API fails
+                    bars.forEach(bar => bar.classList.add('animate'));
+                }
+            });
+            
+            // Audio paused/stopped
+            audioPlayer.addEventListener('pause', () => {
+                stopVisualizer();
+                bars.forEach(bar => bar.classList.remove('animate'));
+            });
+            
             // Main toggle click
             toggle.addEventListener('click', () => {
                 if (!isPlaying) {
@@ -1484,9 +1603,6 @@
                         isPlaying = true;
                         toggle.classList.add('playing');
                         toggle.innerHTML = '<span style="color: #ff006e; font-size: 20px;">⏸</span>';
-                        
-                        // Start visualizer animation
-                        bars.forEach(bar => bar.classList.add('animate'));
                         
                         // Show music info temporarily
                         showMusicInfo();
@@ -1501,9 +1617,6 @@
                     isPlaying = false;
                     toggle.classList.remove('playing');
                     toggle.innerHTML = '<span style="color: #00d4ff; font-size: 20px;">♪</span>';
-                    
-                    // Stop visualizer animation
-                    bars.forEach(bar => bar.classList.remove('animate'));
                 }
             });
             
