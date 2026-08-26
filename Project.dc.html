@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/styles.css">
+<script src="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/_ds_bundle.js"></script>
+<style>
+body { margin:0; }
+@keyframes nocgrid { from { background-position: 0 0, 0 0 } to { background-position: 0 72px, 0 0 } }
+@media (max-width: 820px) { .csrow { grid-template-columns:1fr !important; gap:14px !important; } }
+</style>
+</helmet>
+<div style="background:var(--color-bg); color:var(--color-text); font-family:var(--font-body); min-height:100vh">
+  <div style="position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden">
+    <div style="position:absolute; inset:0; background:radial-gradient(130% 90% at 50% 118%, color-mix(in srgb, var(--color-accent) 17%, transparent), transparent 62%)"></div>
+    <div style="position:absolute; left:-25%; right:-25%; bottom:-8%; height:56vh; opacity:0.28; transform:perspective(440px) rotateX(67deg); transform-origin:bottom center; background-image:linear-gradient(color-mix(in srgb, var(--color-accent) 34%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--color-accent) 34%, transparent) 1px, transparent 1px); background-size:72px 72px; background-position:0 var(--noc-shift, 0px); -webkit-mask-image:linear-gradient(to top, #000 4%, transparent 72%); mask-image:linear-gradient(to top, #000 4%, transparent 72%)"></div>
+  </div>
+
+  <div style="position:relative; z-index:1">
+    <dc-import name="Nav" active="projects" hint-size="100%,58px"></dc-import>
+  </div>
+
+  <div style="position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 28px 120px">
+    <section style="padding:56px 0 44px; max-width:780px; display:flex; flex-direction:column; gap:18px">
+      <a href="Projects.dc.html" style="font-size:13px; text-decoration:none">← Projects</a>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+        <span class="tag {{ p.tagClass }}">{{ p.status }}</span>
+        <span class="text-muted" style="font-size:12px">{{ p.meta }}</span>
+      </div>
+      <h1 style="margin:0; font-size:50px; letter-spacing:-0.03em; line-height:1.06">{{ p.name }}</h1>
+      <p style="margin:0; font-size:18px; line-height:1.6; color:color-mix(in srgb, var(--color-text) 74%, transparent); text-wrap:pretty">{{ p.lede }}</p>
+      <sc-if value="{{ p.hasLink }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:4px"><a class="btn btn-primary" href="{{ p.linkHref }}" target="_blank">{{ p.linkLabel }}</a></div>
+      </sc-if>
+    </section>
+
+    <sc-if value="{{ p.hasStats }}" hint-placeholder-val="{{ true }}">
+      <section class="rv" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1px; background:var(--color-divider); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:64px">
+        <sc-for list="{{ p.stats }}" as="s" hint-placeholder-count="4">
+          <div style="background:var(--color-bg); padding:24px 22px; display:flex; flex-direction:column; gap:6px">
+            <div style="font-size:26px; color:var(--color-accent); letter-spacing:-0.02em">{{ s.value }}</div>
+            <div class="text-muted" style="font-size:11px; line-height:1.4">{{ s.label }}</div>
+          </div>
+        </sc-for>
+      </section>
+    </sc-if>
+
+    <sc-for list="{{ p.sections }}" as="sec" hint-placeholder-count="4">
+      <section class="csrow rv" style="display:grid; grid-template-columns:200px 1fr; gap:40px; padding:42px 0; border-top:1px solid var(--color-divider); align-items:start">
+        <h6 class="text-muted" style="margin:0; padding-top:5px">{{ sec.kicker }}</h6>
+        <div style="max-width:680px; display:flex; flex-direction:column; gap:16px">
+          <h3 style="margin:0; font-size:24px; letter-spacing:-0.02em">{{ sec.title }}</h3>
+          <sc-for list="{{ sec.paras }}" as="para" hint-placeholder-count="2">
+            <p style="margin:0; font-size:15px; line-height:1.7; color:color-mix(in srgb, var(--color-text) 72%, transparent); text-wrap:pretty">{{ para }}</p>
+          </sc-for>
+          <sc-if value="{{ sec.hasBullets }}" hint-placeholder-val="{{ true }}">
+            <ul style="margin:2px 0 0; padding-left:18px; display:flex; flex-direction:column; gap:10px">
+              <sc-for list="{{ sec.bullets }}" as="b" hint-placeholder-count="3">
+                <li style="font-size:15px; line-height:1.65; color:color-mix(in srgb, var(--color-text) 72%, transparent); text-wrap:pretty">{{ b }}</li>
+              </sc-for>
+            </ul>
+          </sc-if>
+        </div>
+      </section>
+    </sc-for>
+
+    <sc-if value="{{ p.hasStack }}" hint-placeholder-val="{{ true }}">
+      <section class="csrow rv" style="display:grid; grid-template-columns:200px 1fr; gap:40px; padding:42px 0; border-top:1px solid var(--color-divider); align-items:start">
+        <h6 class="text-muted" style="margin:0; padding-top:5px">Stack</h6>
+        <div style="max-width:680px">
+          <table class="table">
+            <tbody>
+              <sc-for list="{{ p.stack }}" as="row" hint-placeholder-count="5">
+                <tr>
+                  <td style="width:180px; color:color-mix(in srgb, var(--color-text) 60%, transparent)">{{ row.layer }}</td>
+                  <td>{{ row.tech }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </sc-if>
+
+    <div class="hr" style="margin:72px 0 24px"></div>
+    <div style="display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; font-size:13px" class="text-muted">
+      <a href="Projects.dc.html" style="text-decoration:none">← All projects</a>
+      <a href="{{ nextHref }}" style="text-decoration:none">{{ nextLabel }} →</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180}}">
+const S = (kicker, title, paras, bullets) => ({
+  kicker, title, paras: paras || [],
+  hasBullets: !!(bullets && bullets.length), bullets: bullets || []
+});
+
+class Component extends DCLogic {
+  state = { slug: '' };
+
+  componentDidMount() {
+    this.sync = () => this.setState({ slug: (location.hash || '').replace('#', '') });
+    this.sync();
+    window.addEventListener('hashchange', this.sync);
+  }
+  componentWillUnmount() { window.removeEventListener('hashchange', this.sync); }
+
+  data() {
+    return {
+      'node-1': {
+        name: 'Node 1', status: 'Operating', tagClass: 'tag-accent', meta: 'Dell PowerEdge T630 · Proxmox VE 9',
+        lede: "A self-hosted, single-node datacenter. It hosts every project of mine that isn't a client-side application — two virtualisation models side by side, one public entry point, and enough operational scar tissue to have permanent fixes rather than restarts.",
+        stats: [
+          { value: '16 + 6', label: 'LXC containers + virtual machines' },
+          { value: '141 GB', label: 'memory, Xeon E5-2623 v4, 16 threads' },
+          { value: '9.6 TB', label: 'thin-provisioned LVM pool' },
+          { value: '5', label: 'guest operating systems' }
+        ],
+        sections: [
+          S('Virtualisation', 'Two models, chosen per workload', ['LXC containers run the Linux services at near-zero overhead and high density. Full KVM virtual machines are used only where a real kernel or a non-Linux OS is required — Windows Server, Windows 11, FortiOS and macOS all run as guests. A GTX 1650 is passed through for hardware transcoding.']),
+          S('Ingress', 'One door', ['A single Caddy container is the only public entry point. Applications never face the internet directly: they are addressed by hostname and routed internally, with certificate handling automatic. Public reachability for the game network goes through an outbound tunnel instead, so no perimeter port is ever forwarded and no origin address is published.']),
+          S('Defence in depth', 'Firewall, segmentation, identity', [], ['A FortiGate virtual firewall built and proven for router-on-a-stick hairpin routing', 'VLAN segmentation — gaming, servers, voice, general — designed and staged for rollout', 'A Windows Active Directory domain for identity, with a Linux file server domain-joined so share permissions are driven by directory groups rather than local accounts', 'A 3CX PBX virtual machine handling SIP telephony, plus an OpenVPN endpoint built specifically to give a desk phone a clean route home past a double-NAT problem']),
+          S('Operations', 'Written after things broke', ['Services carry explicit start ordering and delays so dependencies come up in sequence after a cold start. Health checks plus a reconciliation timer detect and restart stalled services automatically — added after a real 24-hour outage where a container was stopped and nothing existed to bring it back.', "A bespoke fan-control daemon reads thermal sensors and drives the chassis fans over IPMI. The distribution's packaged NVIDIA driver won't build against this kernel, so the driver is installed from source and registered with DKMS to survive kernel updates."])
+        ],
+        stack: [
+          { layer: 'Hypervisor', tech: 'Proxmox VE 9 (Debian-based, KVM + LXC)' },
+          { layer: 'Ingress', tech: 'Caddy reverse proxy, Cloudflare Tunnel' },
+          { layer: 'Network', tech: 'FortiGate virtual firewall, VLAN segmentation, OpenVPN' },
+          { layer: 'Identity', tech: 'Windows Active Directory, Samba' },
+          { layer: 'Telephony', tech: '3CX PBX' },
+          { layer: 'Hardware control', tech: 'IPMI fan daemon, NVIDIA driver via DKMS' }
+        ]
+      },
+      'arvfinder': {
+        name: 'ArvFinder', status: 'Live and healthy', tagClass: 'tag-accent', meta: 'arvfinder.com',
+        linkHref: 'https://arvfinder.com', linkLabel: 'Visit arvfinder.com',
+        lede: 'A real-estate investment analysis platform for rental property scouting, built around ARV — After Repair Value — calculation.',
+        sections: [
+          S('What it does', 'Scouting, analysed', [], ['ARV calculator using the industry-standard 70% rule', 'Portfolio management and tracking across multiple properties', 'Comparable-property (comps) analysis', 'Investment metrics — ROI, cash-on-cash return, profit margin', 'Generated PDF property analysis reports', 'Three-tier subscription billing']),
+          S('Architecture', 'Compiled API, separate front end', ['A compiled Go API serves a separately deployed SvelteKit single-page app, with Postgres for persistence — frontend, backend and database each in their own container, composed together and sitting behind a reverse proxy and a CDN.', 'It is multi-tenant, so multiple users and organisations share one deployment safely.'])
+        ],
+        stack: [
+          { layer: 'Frontend', tech: 'SvelteKit, TypeScript, Tailwind CSS' },
+          { layer: 'Backend', tech: 'Go 1.23 with Gin' },
+          { layer: 'Database', tech: 'PostgreSQL' },
+          { layer: 'Auth', tech: 'JWT' },
+          { layer: 'Payments', tech: 'Stripe' },
+          { layer: 'Delivery', tech: 'Docker Compose, reverse proxy, CDN' }
+        ]
+      },
+      'hartlinecpa': {
+        name: 'HartlineCPA', status: 'In development', tagClass: 'tag-outline', meta: 'Multi-tenant accounting SaaS · no public deployment by design',
+        lede: 'An operating system for accounting firms — a multi-tenant platform where CPA practices manage both their own firm and their clients\u2019 books. The most technically ambitious thing here.',
+        stats: [
+          { value: '15', label: 'tenant-scoped tables with RLS enabled and forced' },
+          { value: '6', label: 'capability tiers in the routing decision' },
+          { value: '42', label: 'colour-token pairs contrast-checked in CI' },
+          { value: '2', label: 'databases kept in lockstep on purpose' }
+        ],
+        sections: [
+          S('Tenancy', 'The boundary fails closed', ["Competing accounting practices' books live in one database. Fifteen tenant-scoped tables have row-level security both enabled and forced, verified by an automated check in CI. With no tenant context set, a query returns nothing — so a forgotten context fails closed rather than open.", 'That creates an auth chicken-and-egg: you must read a user row to learn which tenant they belong to, but the policy needs the tenant first. Weakening the policy would turn "returns nothing" into "returns every tenant\u2019s rows", so instead a separate database role with narrowly scoped grants on only the identity tables handles it, with everything else explicitly revoked.']),
+          S('Identity', 'Mandatory MFA, no client-side trust', [], ['Local password sign-in plus Microsoft 365 / Entra ID SSO — full OIDC authorization-code flow with PKCE', 'Server-side sessions with httpOnly cookies; the client never holds a token and never decides who it is', 'TOTP enrolment with encrypted seeds cryptographically bound to the user identity', 'Single-use recovery codes issued once at enrolment; QR codes rendered server-side so no browser package touches a secret']),
+          S('The ledger', 'Double-entry, derived not stored', ['A single controlled write path, chart-of-accounts templates with tax-line mapping for multiple entity types, correct fiscal-period computation for non-calendar year-ends, and corrections handled as reversing entries rather than edits.', 'Financial reports are derived on every request and never cached: a stored balance is a second source of truth that can tie out while being wrong. The data model is bitemporal — every fact carries both when it was true and when it was recorded.', 'Transaction categorisation is deliberately deterministic: firm rule, then the client\u2019s own counterparty history, then uncategorised. No model call, because every decision has to be explainable in one sentence to a CPA who signs off on it.']),
+          S('The AI layer', 'Built with the model call left out', ['Context assembly, prompt templates, prompt-injection defences, structured output schemas and validation, a claim-classification system and full audit records are all built — behind a port with no provider connected. It is fully testable against fixtures with no credential and no outbound traffic.', 'Two hard rules: the model never writes to the accounting database, and untrusted document text never shares a trust tier with verified facts, because a malicious invoice PDF is a live attack path. An adaptive capability router decides whether a model is called at all, across six tiers from purely deterministic up to human CPA review — deterministic resolution is the win condition. Numeric measures are explicitly barred as complexity proxies, since a small-dollar transaction can be the ambiguous one.']),
+          S('Architecture', 'Enforced by the linter', ['Ports-and-adapters, lint-enforced: no cloud SDK import is allowed outside the adapter layer and the build fails if one appears. That is what keeps the eventual cloud migration a configuration change rather than a rewrite. Two databases run on purpose — a working one and a schema-identical, deliberately empty one, kept in lockstep by automated migration checks, to prove the migration path is real before it is ever pointed at a cloud provider.', 'Accessibility is gated in CI across light and dark themes, and figures the system cannot yet supply return an explicit pending marker rather than rendering as zero.']),
+          S('Honest state', 'A general ledger, not yet a bookkeeping product', ['Customer and vendor subledgers, invoicing, payment application, bank reconciliation and cash-basis reporting are specified and planned but not built. That gap is tracked openly rather than papered over.'])
+        ],
+        stack: [
+          { layer: 'Language', tech: 'TypeScript on Node 22, end to end' },
+          { layer: 'API', tech: 'Fastify' },
+          { layer: 'ORM / DB', tech: 'Prisma + PostgreSQL (row-level security)' },
+          { layer: 'Frontend', tech: 'React + Vite' },
+          { layer: 'Structure', tech: 'npm workspaces monorepo — api / web / worker, shared / db / ledger' },
+          { layer: 'Target platform', tech: 'Azure serverless, 8-stage migration runbook' }
+        ]
+      },
+      'juntradio': {
+        name: 'JuntRadio', status: 'Running internally · domain parked', tagClass: 'tag-outline', meta: 'juntradio.com',
+        lede: 'A multi-channel internet radio platform — and specifically not a web music player. It runs a genuine broadcast pipeline, so each channel\u2019s stream is something a real LPFM transmitter or encoder could pull from directly.',
+        stats: [
+          { value: '5', label: 'simultaneous live channels' },
+          { value: '5', label: 'containers in the compose stack' },
+          { value: 'seconds', label: 'from manifest edit to on-air, no restart' }
+        ],
+        sections: [
+          S('Behaviour', 'It behaves like radio', ['Five independent broadcast mounts — lofi, rock, rap, pop, country — each with its own rotation and on-air state. Listeners tune in; they do not pick tracks. Each channel\u2019s playlist is an explicit, ordered, version-controlled manifest rather than a folder scan, and edits go live within seconds with no restart.', 'A separate administration interface handles per-channel management, deliberately bound to localhost only and never linked from the public page.']),
+          S('Client', 'Installable, and portable', ['The frontend is a vanilla-JS progressive web app with a service worker and Media Session API integration, so lock-screen controls and background playback work properly on mobile. It uses only relative paths and proxies both the API and the audio streams internally, so the same build works whether it is reached directly or through a proxy under a real domain — no hardcoded hostnames anywhere.']),
+          S('Content', 'Stated on the page', ['The country channel carries genuinely licensed tracks. The lofi channel is royalty-free placeholder content and says so both on-page and in the API response. Three channels are intentionally silent pending programming.'])
+        ],
+        stack: [
+          { layer: 'Streaming server', tech: 'Icecast' },
+          { layer: 'Audio pipeline', tech: 'Liquidsoap — one process, five outputs' },
+          { layer: 'API', tech: 'Python / Flask' },
+          { layer: 'Admin', tech: 'Python / Flask, localhost-bound' },
+          { layer: 'Frontend', tech: 'nginx serving a vanilla-JS PWA' }
+        ]
+      },
+      'chair7': {
+        name: 'Chair 7 Backup', status: 'Pre-release', tagClass: 'tag-outline', meta: 'macOS · Linux · Windows',
+        lede: 'A backup product — a native desktop agent plus a cloud control plane. One Rust codebase across three platforms, seven crates in a Cargo workspace.',
+        sections: [
+          S('The engine', 'Chunk, hash, dedupe, meter', [], ['Content-defined chunking, hashing, manifest generation and client-side cryptography', 'Pluggable storage backends — local filesystem and Azure Blob Storage', 'An embedded key-value dedup index with reconciliation, so identical data is never uploaded twice', 'Usage metering with a durable offline spool, so billing events survive the machine being offline', 'A command-line agent and a native tray-plus-window desktop application']),
+          S('Security', 'The agent never holds a key', ['The agent authenticates to cloud storage with short-lived scoped tokens issued by the control plane — it never holds a storage account key. A compromised endpoint therefore cannot be used to reach anything beyond its own scope.']),
+          S('Honest gating', 'Code signing is the blocker', ['No code signing yet: unsigned macOS and Windows bundles trip the platform gatekeepers, so a developer certificate for each platform is the blocking requirement before customers. Key-recovery UI and a real scheduler are also still open.', 'The product also has a dedicated repository of 18 legal agreements and policies, version-controlled specifically so it is provable which version of a document a given customer signed.'])
+        ],
+        stack: [
+          { layer: 'Agent', tech: 'Rust — one codebase, three platforms' },
+          { layer: 'Desktop UI', tech: 'Tauri v2 — native webview, no bundled browser' },
+          { layer: 'Storage', tech: 'Official Azure Blob SDK' },
+          { layer: 'Dedup index', tech: 'Embedded key-value store' },
+          { layer: 'Control plane', tech: 'Python, containerised' }
+        ]
+      },
+      'hitech-devops': {
+        name: 'HiTech DevOps portal', status: 'Phase 1 complete', tagClass: 'tag-outline', meta: 'Technician console · internal, by design',
+        lede: 'A technician-facing console for an IT managed-service provider. Type a machine name, get one consolidated view assembled from several separate vendor systems instead of logging into four consoles.',
+        sections: [
+          S('Phase 1', 'One screen, four sources', [], ['Consolidated device summary, live system resources, endpoint-security posture across five tabs, open service tickets and a remote-monitoring activity feed — all on one screen', 'Deep-linkable device URLs', 'Per-source partial failure containment, so one dead vendor integration does not produce a blank page', 'Responsive down to phone width, verified by headless render checks; reboot resilience proven by actually rebooting the host']),
+          S('Four rules', 'Each has a real failure mode', ['No invented figures: a value is either present with a known source or explicitly unavailable, so a missing figure cannot be quietly rendered as 0. The offline sample device proves it — its CPU and memory come back "unavailable", not "0%". Zero CPU on a dead machine is a true-looking lie, and this tool gets read during incidents.', 'Sample data always identifies itself, with a provenance banner in the UI, because without it a screenshot of this app misrepresents a real customer estate. There is no silent fallback to sample data in live mode — a source without credentials returns an error, verified.', 'And no fake success on a write: endpoint-security controls that would suppress enforcement on a real machine are rendered read-only with the reason stated, rather than wired to local state that merely looks like it worked. The original design mock-up flipped the toggle and printed a success message with nothing behind it; that behaviour was deliberately not reproduced.']),
+          S('Boundaries', 'The build holds the line', ['A vendor SDK import or vendor hostname appearing outside the adapter layer fails the build. Navigation entries for unbuilt screens are disabled with a phase marker rather than rendered as live-looking tabs that go nowhere.'])
+        ],
+        stack: [
+          { layer: 'Language', tech: 'TypeScript on Node 22' },
+          { layer: 'API', tech: 'Fastify' },
+          { layer: 'Frontend', tech: 'React + Vite' },
+          { layer: 'Structure', tech: 'npm workspaces monorepo' },
+          { layer: 'Planned target', tech: 'Azure Container Apps' }
+        ]
+      },
+      'eegility': {
+        name: 'EEGility', status: 'Reachable, database layer down', tagClass: 'tag-neutral', meta: 'eegility.com · degraded as of 2026-08-26',
+        lede: 'A neuroscience data platform: BIDS-compatible EEG data management and analysis, with machine-learning-based ADHD detection. The site loads; the database layer is crash-looping and the API is failing its health check.',
+        sections: [
+          S('What it does', 'Recordings in, classification out', [], ['Upload, browse and download EEG recordings', 'Metadata tracking conforming to BIDS, the standard for organising neuroimaging datasets', 'ADHD classification using a Support Vector Machine model', 'Handles the formats clinicians and researchers actually use — EDF/EDF+, BioSemi BDF, BrainVision, EEGLab, FIFF, Neuroscan CNT and raw NumPy arrays', 'Charting and visualisation of recordings']),
+          S('Architecture', 'A real microservice split', ['The Python analysis service is a separate deployable unit from the Node API, because EEG processing is CPU-bound and should not block request handling. GridFS is used specifically because EEG recordings routinely exceed MongoDB\u2019s 16 MB single-document limit.', 'The repository also carries a C# / ASP.NET Core reimplementation of the backend alongside the Node one — an in-progress platform migration, with both stacks building against the same data model.'])
+        ],
+        stack: [
+          { layer: 'Frontend', tech: 'React, Material-UI, Chart.js, Formik' },
+          { layer: 'API', tech: 'Node.js / Express (C# / ASP.NET Core in progress)' },
+          { layer: 'Database', tech: 'MongoDB with GridFS' },
+          { layer: 'Processing', tech: 'Python with MNE' },
+          { layer: 'ML', tech: 'Support Vector Machine classifier' }
+        ]
+      },
+      'tessera': {
+        name: 'Tessera / HartlineAV', status: 'Application down', tagClass: 'tag-neutral', meta: 'hartlineav.com · pre-general-availability',
+        lede: 'An endpoint security product. A web console ("OrgHub") manages organisations and devices; a separate native agent runs on the protected machines. The service is currently flapping — it accepts a connection and then refuses.',
+        sections: [
+          S('Shape', 'Two products, one contract', ['The endpoint agent lives in a separate repository from the web console and shares no code with it — only a network API contract. The agent ships to end-user devices and has a completely different release cadence, threat model and build pipeline than a server-side web app, so coupling them in one monorepo would have been a mistake.', 'Rust was chosen for the agent for memory safety without a runtime or garbage collector, which is appropriate for software running with elevated privileges on machines you do not control.']),
+          S('Deployment', 'Production and development, side by side', ['Production and development stacks run in parallel on the same host, fully isolated from one another. A demo account exists for walkthroughs. Supporting the build: a full AWS CI/CD and ticket-automation design document, plus a maintained append-only engineering runbook.'])
+        ],
+        stack: [
+          { layer: 'Frontend', tech: 'Vite, TypeScript' },
+          { layer: 'Backend', tech: 'Fastify (Node.js), Prisma ORM' },
+          { layer: 'Database', tech: 'PostgreSQL' },
+          { layer: 'Endpoint agent', tech: 'Rust — standalone native executable' }
+        ]
+      },
+      'minecraft': {
+        name: 'Minecraft server network', status: 'Live and public', tagClass: 'tag-accent', meta: 'Reached through a tunnel service',
+        lede: 'A multi-server game network running four distinct game backends behind a single connection address — a proxy topology, exactly like a production microservice gateway.',
+        sections: [
+          S('Topology', 'One address, four backends', ['One entry point routes players to a vanilla SMP world, a modded Pixelmon world, a SkyFactory 4 world, or a lobby, with cross-version client support so players on different game versions reach the same network. Velocity handles modern player-info forwarding — cryptographically signed identity forwarding to the backends, with independent per-backend lifecycle.']),
+          S('Resource management', 'Sleeping servers', ['Idle-sleep runs on the heavy modded backends: a lightweight front-end process holds the port and only wakes the real server when someone actually connects, then puts it back to sleep. Modded Minecraft servers consume enormous RAM continuously, so this reclaims it when nobody is playing.', 'Public reachability goes through a tunnel service, so no perimeter port forwarding is required.'])
+        ],
+        stack: [
+          { layer: 'Proxy', tech: 'Velocity (Java), modern forwarding' },
+          { layer: 'Backends', tech: 'Vanilla, NeoForge/Pixelmon, SkyFactory 4' },
+          { layer: 'Idle management', tech: 'lazymc' },
+          { layer: 'Ingress', tech: 'Tunnel service, no inbound firewall rule' },
+          { layer: 'Hosting', tech: 'One Linux container per backend' }
+        ]
+      },
+      'houdini': {
+        name: 'Houdini CPPS', status: 'Running (private)', tagClass: 'tag-outline', meta: 'Retro game server preservation',
+        lede: 'A private server implementation of a shut-down 2000s children\u2019s MMO, restored to a fully playable state — minigames included. Twelve containers, four localised world servers, and a Flash problem solved without asking anyone to install anything.',
+        sections: [
+          S('The core problem', 'Flash, in a browser that killed Flash', ['The original game is Adobe Flash, which no modern browser can run. Rather than asking visitors to install anything, Ruffle — a Flash emulator compiled to WebAssembly — is self-hosted and injected into the page templates, so it transparently intercepts and runs the original game files in any current browser.']),
+          S('Debugging wins', 'Three fixes worth keeping', [], ['A client library was issuing a protocol handshake the pinned cache server was too old to understand, crash-looping every world server — found by reading the protocol version rather than the error message.', 'The web server image predated WebAssembly having a standard MIME type, silently breaking the emulator\u2019s loader. Fixed by patching the MIME type mapping.', 'Routing was reworked from hostname-based to port-based so any device on the network could connect with zero client-side configuration — no DNS changes, no hosts-file edits. An accessibility decision driven by a real constraint.'])
+        ],
+        stack: [
+          { layer: 'Game server', tech: 'Python 3 / asyncio' },
+          { layer: 'Database', tech: 'PostgreSQL' },
+          { layer: 'Cache / state', tech: 'Redis' },
+          { layer: 'Web layer', tech: 'nginx, self-hosted Ruffle (WebAssembly)' },
+          { layer: 'Scope', tech: 'Four world servers (EN/ES/PT/FR), login, item and minigame services' }
+        ]
+      },
+      'assets-nexus': {
+        name: 'Assets Nexus, LLC', status: 'Operating', tagClass: 'tag-accent', meta: 'A company I own · 2023 — Present',
+        lede: 'A real estate management business I own, focused on Section 8 and corporate leasing — and the Palantir Foundry platform I built to run it.',
+        sections: [
+          S('The platform', 'An ontology of the actual business', [], ['A complex ontology with 14 object types and 16 link types modelling real-world business relationships and data flows', 'HUD Fair Market Rent and RentCast API integrations for automated property valuation and market analysis', 'Pipeline Builder transforms for ingestion, cleansing and automated calculations including financial reporting', 'Workshop applications for data visualisation, tenant management and real-time portfolio analytics']),
+          S('The business', 'Owned and operated, not consulted on', ['I own the company. Section 8 and corporate leasing, with expansion strategies developed for national growth and systems for optimising property occupancy — the Foundry work above exists because I needed it to run the portfolio, not as a client deliverable.'])
+        ],
+        stack: [
+          { layer: 'Platform', tech: 'Palantir Foundry' },
+          { layer: 'Modelling', tech: 'Ontology — 14 object types, 16 link types' },
+          { layer: 'Pipelines', tech: 'Pipeline Builder transforms' },
+          { layer: 'Applications', tech: 'Workshop' },
+          { layer: 'External data', tech: 'HUD Fair Market Rent, RentCast' }
+        ]
+      },
+      'peridot': {
+        name: 'Peridot Assets', status: 'Registered, parked', tagClass: 'tag-neutral', meta: 'peridotassets.com',
+        lede: 'The umbrella brand covering the infrastructure and several of the projects here. The domain is registered and resolves to a registrar parking page; no application is deployed behind it.',
+        sections: [
+          S('State', 'An open slot', ['A routing rule exists internally but points at an empty placeholder container. Listed here for completeness rather than as work to review.'])
+        ]
+      },
+      'maintenance-nexus': {
+        name: 'Maintenance Nexus', status: 'Not started', tagClass: 'tag-neutral', meta: 'Planned and resourced',
+        lede: 'A tenant-maintenance automation platform for a property management company. Provisioned, planned, and honestly unbuilt.',
+        sections: [
+          S('State', 'Roadmap, not shipped', ['The host environment is provisioned and sized at 6 cores and 16 GB with a container runtime installed, and a full architecture and phased build plan is written — but no application code is deployed yet. Included for completeness; it is a roadmap item, not a shipped project.'])
+        ]
+      }
+    };
+  }
+
+  renderVals() {
+    const all = this.data();
+    const order = Object.keys(all);
+    const slug = all[this.state.slug] ? this.state.slug : 'node-1';
+    const raw = all[slug];
+    const next = order[(order.indexOf(slug) + 1) % order.length];
+    return {
+      p: Object.assign({
+        hasStats: !!(raw.stats && raw.stats.length),
+        hasStack: !!(raw.stack && raw.stack.length),
+        hasLink: !!raw.linkHref,
+        stats: raw.stats || [], stack: raw.stack || []
+      }, raw),
+      nextHref: 'Project.dc.html#' + next,
+      nextLabel: 'Next: ' + all[next].name
+    };
+  }
+}
+</script>
+</body>
+</html>

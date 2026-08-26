@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/styles.css">
+<script src="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/_ds_bundle.js"></script>
+<style>
+body { margin:0; }
+.contactrow { transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+.contactrow:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); border-color: color-mix(in srgb, var(--color-accent) 55%, transparent); transform: translateY(-2px); }
+@keyframes nocgrid { from { background-position: 0 0, 0 0 } to { background-position: 0 72px, 0 0 } }
+</style>
+</helmet>
+<div style="background:var(--color-bg); color:var(--color-text); font-family:var(--font-body); min-height:100vh">
+  <div style="position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden">
+    <div style="position:absolute; inset:0; background:radial-gradient(130% 90% at 50% 118%, color-mix(in srgb, var(--color-accent) 17%, transparent), transparent 62%)"></div>
+    <div style="position:absolute; left:-25%; right:-25%; bottom:-8%; height:56vh; opacity:0.28; transform:perspective(440px) rotateX(67deg); transform-origin:bottom center; background-image:linear-gradient(color-mix(in srgb, var(--color-accent) 34%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--color-accent) 34%, transparent) 1px, transparent 1px); background-size:72px 72px; background-position:0 var(--noc-shift, 0px); -webkit-mask-image:linear-gradient(to top, #000 4%, transparent 72%); mask-image:linear-gradient(to top, #000 4%, transparent 72%)"></div>
+  </div>
+
+  <div style="position:relative; z-index:1">
+    <dc-import name="Nav" active="contact" hint-size="100%,58px"></dc-import>
+  </div>
+
+  <div style="position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 28px 120px">
+    <section style="padding:96px 0 56px; max-width:640px; display:flex; flex-direction:column; gap:18px">
+      <h1 style="margin:0; font-size:48px; letter-spacing:-0.03em">Contact me</h1>
+      <p style="margin:0; font-size:17px; line-height:1.6; color:color-mix(in srgb, var(--color-text) 72%, transparent); text-wrap:pretty">Open to software engineering roles, AI and security work, and collaboration on anything that needs to get built and deployed. Email is fastest.</p>
+    </section>
+
+    <section class="rv" style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:64px; align-items:start">
+      <div style="display:flex; flex-direction:column; gap:10px">
+        <h6 class="text-muted" style="margin:0 0 12px">Direct</h6>
+        <sc-for list="{{ links }}" as="l" hint-placeholder-count="3">
+          <a class="contactrow" href="{{ l.href }}" target="_blank" style="display:flex; justify-content:space-between; align-items:center; gap:20px; padding:18px; border:1px solid var(--color-divider); border-radius:var(--radius-md); text-decoration:none; color:inherit">
+            <div style="display:flex; flex-direction:column; gap:3px">
+              <div style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-accent)">{{ l.label }}</div>
+              <div style="font-size:15px">{{ l.value }}</div>
+            </div>
+            <span style="color:var(--color-accent)">→</span>
+          </a>
+        </sc-for>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px">
+        <h6 class="text-muted" style="margin:0 0 4px">Send a message</h6>
+        <div class="field">
+          <label for="cname">Name</label>
+          <input class="input" id="cname" type="text" placeholder="Your name">
+        </div>
+        <div class="field">
+          <label for="cemail">Email</label>
+          <input class="input" id="cemail" type="email" placeholder="you@company.com">
+        </div>
+        <div class="field">
+          <label for="cmsg">Message</label>
+          <textarea class="input" id="cmsg" placeholder="What are you working on?"></textarea>
+        </div>
+        <a class="btn btn-primary btn-block" href="mailto:vhartline03@gmail.com">Send email</a>
+        <p class="text-muted" style="margin:2px 0 0; font-size:12px">The button opens your mail client — no backend behind this form yet.</p>
+      </div>
+    </section>
+
+    <div class="hr" style="margin:88px 0 28px"></div>
+    <div style="display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; font-size:13px" class="text-muted">
+      <div>Vincent Hartline</div>
+      <a href="Home.dc.html" style="text-decoration:none">Back home →</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      links: [
+        { label: 'Email', value: 'vhartline03@gmail.com', href: 'mailto:vhartline03@gmail.com' },
+        { label: 'LinkedIn', value: 'linkedin.com/in/vincenthartline', href: 'https://linkedin.com/in/vincenthartline' },
+        { label: 'GitHub', value: 'github.com/Vinny424', href: 'https://github.com/Vinny424/' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

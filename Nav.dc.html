@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/styles.css">
+<script src="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/_ds_bundle.js"></script>
+<style>
+html { scroll-behavior: smooth; }
+.rv, .rv-stagger > * {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1);
+  will-change: opacity, transform;
+}
+.rv.rv-in, .rv-stagger > *.rv-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .rv, .rv-stagger > * { opacity: 1; transform: none; transition: none; }
+}
+.tabnav a { position:relative; padding:10px 2px; letter-spacing:0.01em; transition: color .2s ease; }
+.tabnav a::after { content:''; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--color-accent); opacity:0; transition:opacity .15s ease; }
+.tabnav a:hover::after { opacity:.4; }
+.tabnav a[aria-current='page'] { color:var(--color-accent); }
+.tabnav a[aria-current='page']::after { opacity:1; }
+</style>
+</helmet>
+<div style="position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--color-bg) 88%, transparent); backdrop-filter:blur(10px)">
+  <div class="nav tabnav" style="max-width:1080px; margin:0 auto; padding:0 28px; gap:28px; align-items:stretch">
+    <a class="nav-brand" href="Home.dc.html" style="display:flex; align-items:center; margin-right:auto; font-size:15px; letter-spacing:-0.01em">Vincent Hartline</a>
+    <a href="Home.dc.html" aria-current="{{ isHome }}">Home</a>
+    <a href="Resume.dc.html" aria-current="{{ isResume }}">Resume</a>
+    <a href="Projects.dc.html" aria-current="{{ isProjects }}">Projects</a>
+    <a href="Contact.dc.html" aria-current="{{ isContact }}">Contact</a>
+  </div>
+  <div style="height:1px; background:linear-gradient(to right, transparent, var(--color-divider) 48px, var(--color-divider) calc(100% - 48px), transparent)"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;resume&quot;,&quot;projects&quot;,&quot;contact&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    const targets = () => document.querySelectorAll('.rv, .rv-stagger > *');
+    this.io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        const el = e.target;
+        if (el._rvT) clearTimeout(el._rvT);
+        if (e.isIntersecting) {
+          const p = el.parentElement;
+          const delay = (p && p.classList.contains('rv-stagger'))
+            ? Array.prototype.indexOf.call(p.children, el) * 70 : 0;
+          el._rvT = setTimeout(() => el.classList.add('rv-in'), delay);
+        } else {
+          el.classList.remove('rv-in');
+        }
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.04 });
+
+    this.scan = () => targets().forEach(el => this.io.observe(el));
+    this.scan();
+    this.mo = new MutationObserver(() => this.scan());
+    this.mo.observe(document.body, { childList: true, subtree: true });
+
+    const scroller = document.scrollingElement || document.documentElement;
+    this.onScroll = () => {
+      const y = scroller.scrollTop || window.scrollY || 0;
+      document.documentElement.style.setProperty('--noc-shift', (y * 0.14 % 72) + 'px');
+    };
+    this.onScroll();
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+  }
+  componentWillUnmount() {
+    if (this.io) this.io.disconnect();
+    if (this.mo) this.mo.disconnect();
+    window.removeEventListener('scroll', this.onScroll);
+  }
+
+  renderVals() {
+    const a = this.props.active || 'home';
+    const f = (k) => (a === k ? 'page' : null);
+    return { isHome: f('home'), isResume: f('resume'), isProjects: f('projects'), isContact: f('contact') };
+  }
+}
+</script>
+</body>
+</html>
