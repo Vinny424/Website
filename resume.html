@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/styles.css">
+<script src="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/_ds_bundle.js"></script>
+<style>
+body { margin:0; }
+@keyframes nocgrid { from { background-position: 0 0, 0 0 } to { background-position: 0 72px, 0 0 } }
+@media (max-width: 820px) { .rrow { grid-template-columns:1fr !important; gap:12px !important; } }
+</style>
+</helmet>
+<div style="background:var(--color-bg); color:var(--color-text); font-family:var(--font-body); min-height:100vh">
+  <div style="position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden">
+    <div style="position:absolute; inset:0; background:radial-gradient(130% 90% at 50% 118%, color-mix(in srgb, var(--color-accent) 17%, transparent), transparent 62%)"></div>
+    <div style="position:absolute; left:-25%; right:-25%; bottom:-8%; height:56vh; opacity:0.28; transform:perspective(440px) rotateX(67deg); transform-origin:bottom center; background-image:linear-gradient(color-mix(in srgb, var(--color-accent) 34%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--color-accent) 34%, transparent) 1px, transparent 1px); background-size:72px 72px; background-position:0 var(--noc-shift, 0px); -webkit-mask-image:linear-gradient(to top, #000 4%, transparent 72%); mask-image:linear-gradient(to top, #000 4%, transparent 72%)"></div>
+  </div>
+
+  <div style="position:relative; z-index:1">
+    <dc-import name="Nav" active="resume" hint-size="100%,58px"></dc-import>
+  </div>
+
+  <div style="position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 28px 120px">
+    <section style="padding:72px 0 36px; display:flex; justify-content:space-between; align-items:end; gap:28px; flex-wrap:wrap">
+      <div style="max-width:620px; display:flex; flex-direction:column; gap:14px">
+        <h1 style="margin:0; font-size:44px; letter-spacing:-0.03em">Resume</h1>
+        <p style="margin:0; font-size:16px; line-height:1.6; color:color-mix(in srgb, var(--color-text) 70%, transparent); text-wrap:pretty">Data engineer and PhD student in Computer Science. Certified Palantir Foundry &amp; AIP Builder, dual master's degrees in Computer Systems Technology. Full document below.</p>
+      </div>
+      <div style="display:flex; gap:10px">
+        <a class="btn btn-primary" href="resume.pdf" download="Vincent-Hartline-Resume.pdf">Download PDF</a>
+        <a class="btn btn-secondary" href="resume.pdf" target="_blank">Open in new tab</a>
+      </div>
+    </section>
+
+    <section style="border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md); background:var(--color-surface)">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:11px 18px; border-bottom:1px solid var(--color-divider); font-size:12px">
+        <span class="text-muted">resume.pdf</span>
+        <span class="text-muted">Scroll to page through</span>
+      </div>
+      <iframe src="resume.pdf" title="Vincent Hartline resume" style="display:block; width:100%; height:1000px; border:0; background:var(--color-surface)"></iframe>
+      <div style="padding:12px 18px; border-top:1px solid var(--color-divider)">
+        <p class="text-muted" style="margin:0; font-size:12px">If the document does not display in your browser, use Download PDF above.</p>
+      </div>
+    </section>
+
+    <section class="rv" style="padding:80px 0 0">
+      <div class="rrow" style="display:grid; grid-template-columns:200px 1fr; gap:40px; align-items:start">
+        <h6 class="text-muted" style="margin:0; padding-top:5px">Experience</h6>
+        <div style="display:flex; flex-direction:column; max-width:720px">
+          <sc-for list="{{ roles }}" as="r" hint-placeholder-count="6">
+            <div style="display:flex; flex-direction:column; gap:8px; padding:22px 0; border-top:1px solid var(--color-divider)">
+              <div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:baseline">
+                <div style="font-size:18px">{{ r.title }}</div>
+                <div style="font-size:12px; color:var(--color-accent-300)">{{ r.period }}</div>
+              </div>
+              <div class="text-muted" style="font-size:13px">{{ r.org }}</div>
+              <ul style="margin:6px 0 0; padding-left:18px; display:flex; flex-direction:column; gap:7px">
+                <sc-for list="{{ r.points }}" as="pt" hint-placeholder-count="3">
+                  <li style="font-size:14px; line-height:1.6; color:color-mix(in srgb, var(--color-text) 70%, transparent); text-wrap:pretty">{{ pt }}</li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section class="rv" style="padding:56px 0 0">
+      <div class="rrow" style="display:grid; grid-template-columns:200px 1fr; gap:40px; align-items:start">
+        <h6 class="text-muted" style="margin:0; padding-top:5px">Education</h6>
+        <div style="max-width:720px">
+          <table class="table">
+            <tbody>
+              <sc-for list="{{ education }}" as="e" hint-placeholder-count="4">
+                <tr>
+                  <td style="width:44%">{{ e.degree }}</td>
+                  <td class="text-muted">{{ e.school }}</td>
+                  <td style="width:110px; text-align:right; color:var(--color-accent-300); font-size:13px">{{ e.when }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="rv" style="padding:56px 0 0">
+      <div class="rrow" style="display:grid; grid-template-columns:200px 1fr; gap:40px; align-items:start">
+        <h6 class="text-muted" style="margin:0; padding-top:5px">Competencies</h6>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:26px; max-width:720px">
+          <sc-for list="{{ groups }}" as="g" hint-placeholder-count="6">
+            <div style="display:flex; flex-direction:column; gap:10px">
+              <div style="font-size:13px; color:var(--color-accent-300)">{{ g.label }}</div>
+              <div style="display:flex; flex-wrap:wrap; gap:7px">
+                <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="5">
+                  <span class="tag tag-neutral">{{ it }}</span>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+
+    <section class="rv" style="padding:56px 0 0">
+      <div class="rrow" style="display:grid; grid-template-columns:200px 1fr; gap:40px; align-items:start">
+        <h6 class="text-muted" style="margin:0; padding-top:5px">Certifications</h6>
+        <div style="display:flex; flex-direction:column; gap:16px; max-width:720px">
+          <sc-for list="{{ certs }}" as="c" hint-placeholder-count="3">
+            <div style="display:flex; flex-direction:column; gap:4px">
+              <div style="font-size:16px">{{ c.name }}</div>
+              <p class="text-muted" style="margin:0; font-size:13px; line-height:1.6; text-wrap:pretty">{{ c.detail }}</p>
+            </div>
+          </sc-for>
+          <p class="text-muted" style="margin:8px 0 0; font-size:13px">Security clearance: pending.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      roles: [
+        { title: 'Data Engineer II, Team Lead', org: 'Small Business Consulting Corporation (SBCC) · Remote/Hybrid', period: 'Jun 2026 — Present', points: [
+          'Promoted from Data Engineer I within two months of joining; lead a data engineering team across Palantir Foundry client consulting engagements.',
+          'Own pipeline operations and ontology development, and direct Workshop application builds that translate raw client data into actionable business intelligence.',
+          'Use InVision for collaborative prototyping and Maven Smart System for pipeline orchestration within the Foundry ecosystem.'
+        ]},
+        { title: 'Data Engineer I', org: 'Small Business Consulting Corporation (SBCC) · Remote/Hybrid', period: 'Apr 2026 — Jun 2026', points: [
+          'Supported enterprise data engineering operations leveraging Palantir Foundry expertise across client consulting engagements.',
+          'Developed Python, TypeScript and SQL solutions for ingestion, transformation and API integration supporting Foundry pipeline operations.'
+        ]},
+        { title: 'Software Developer (Contract)', org: 'RallyProp.ai', period: 'Present', points: [
+          'Contract software development.'
+        ]},
+        { title: 'Pipeline Engineer / Systems Analyst', org: 'HiTech Computers (Managed Service Provider) · Ruston, LA', period: 'Aug 2025 — Present', points: [
+          'Optimize MSP workflows and data pipelines for enterprise IT service delivery, supporting multi-client infrastructure management.',
+          'Developed an automated Python script integrating the NinjaRMM API to analyze device lifecycle across 500+ endpoints, generating age and specification reports for proactive hardware replacement planning.',
+          'Architected Power BI dashboards providing real-time visibility into ticket metrics, SLA compliance and technician performance.',
+          'Redesigned ticket workflow processes, resulting in a 30% improvement in first-response times.',
+          'Created data integration solutions connecting PSA, RMM and documentation platforms into a single source of truth for operational metrics.'
+        ]},
+        { title: 'Software Engineer — AirStorm-GFS Weather Prediction System', org: 'U.S. Air Force Global Strike Command contract', period: 'Aug 2024 — May 2025', points: [
+          "Architected an enterprise weather prediction solution utilizing Google's GraphCast AI model for mission-critical military operations.",
+          'Implemented scalable cloud infrastructure on AWS with Docker containerization, achieving 99.9% uptime for real-time forecasting.',
+          'Integrated the Open-Meteo API for GEOTIFF/GeoJSON data processing, enabling precision weather modeling and visualization.',
+          'Established a CI/CD pipeline using GitHub and ClickUp integration, reducing deployment time by 60%.'
+        ]},
+        { title: 'Owner — Assets Nexus, LLC', org: 'Real estate management business I own · Section 8 and corporate leasing', period: '2023 — Present', points: [
+          'Own and operate the business; architected its property management platform in Palantir Foundry for a multi-property portfolio.',
+          'Designed a complex ontology with 14 object types and 16 link types modeling real-world business relationships and data flows.',
+          'Integrated HUD Fair Market Rent and RentCast APIs for automated property valuation and market analysis.',
+          'Built Pipeline Builder transforms for ingestion, cleansing and automated financial calculations, plus Workshop applications for tenant management and portfolio analytics.'
+        ]}
+      ],
+      education: [
+        { degree: 'PhD in Computer Science', school: 'Louisiana State University', when: 'In progress' },
+        { degree: 'MS, Computer Systems Technology — Computer Science', school: 'LSU Shreveport', when: 'May 2025' },
+        { degree: 'MS, Computer Systems Technology — Cybersecurity & Networking', school: 'LSU Shreveport', when: 'May 2025' },
+        { degree: 'BS, Computer Science — Cybersecurity & Networking', school: 'LSU Shreveport', when: 'Dec 2024' }
+      ],
+      groups: [
+        { label: 'Palantir Foundry & data engineering', items: ['Ontology design', 'Pipeline Builder', 'Code Repositories', 'Quiver', 'Workshop', 'Transforms', 'Functions', 'Object & Link Types'] },
+        { label: 'Programming', items: ['TypeScript', 'Python', 'Go', 'Rust', 'Java', 'C/C++', 'C#', 'Swift', 'SQL'] },
+        { label: 'Frameworks', items: ['React', 'Node.js', 'SvelteKit', 'Angular', 'Vue.js', 'Fastify', 'Flask'] },
+        { label: 'Cloud & DevOps', items: ['AWS (EC2, S3, Lambda)', 'Azure', 'Docker', 'Kubernetes', 'CI/CD', 'Jenkins', 'IaC'] },
+        { label: 'Analytics & BI', items: ['Power BI', 'Data visualization', 'SQL', 'NinjaRMM', 'Workflow automation'] },
+        { label: 'Cybersecurity & network', items: ['Splunk', 'QRadar', 'ELK', 'Vulnerability assessment', 'Penetration testing', 'Incident response'] },
+        { label: 'AI / ML', items: ['TensorFlow', 'PyTorch', 'Deep learning', 'Computer vision', 'NLP'] }
+      ],
+      certs: [
+        { name: 'Palantir Foundry & AIP Builder Foundations', detail: 'Certification covering ontology design, data integration, Pipeline Builder, Workshop and AIP capabilities — completed with an end-to-end Applied Notional pipeline project.' },
+        { name: 'Foundry Data Engineer (in progress)', detail: 'Advanced certification track focused on production data engineering and complex ontology design.' },
+        { name: 'Penetration testing toolchain', detail: 'Hands-on with Zenmap, Nessus, OpenVAS and Hashcat; advanced coursework in OOP, network security, algorithm analysis and systems architecture.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

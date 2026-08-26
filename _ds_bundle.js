@@ -1,8 +1,8 @@
-/* @ds-bundle: {"format":4,"namespace":"Nocturne_noctur","components":[],"sourceHashes":{},"inlinedExternals":[],"unexposedExports":[]} */
+/* @ds-bundle: {"format":4,"namespace":"Organic_organi","components":[],"sourceHashes":{},"inlinedExternals":[],"unexposedExports":[]} */
 
 (() => {
 
-const __ds_ns = (window.Nocturne_noctur = window.Nocturne_noctur || {});
+const __ds_ns = (window.Organic_organi = window.Organic_organi || {});
 
 const __ds_scope = {};
 
