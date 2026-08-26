@@ -1,6 +1,6 @@
-# Organic design system
+# Nocturne design system
 
-Organic is warm, rounded and a little playful: a cream-and-sand ground with a terracotta accent and a sage second accent, Caprasimo display headings over Figtree, 16px radii that grow into pills and soft circular shapes. Photographs are washed so they sit back into the warm page instead of on top of it.
+Nocturne is a quiet, compact dark interface: a near-neutral blue-grey ground, Inter at medium weight, soft 8px radii and an accent used as a line and a glow rather than a flood. Rules fade to transparent at their ends — over 48px a side — rather than stopping cleanly; short accent marks stay solid. Contrast comes from the tonal ramps, not from saturation, and photographs blend into the page with their dark values falling away.
 
 ## How to use this
 
@@ -11,19 +11,19 @@ Organic is warm, rounded and a little playful: a cream-and-sand ground with a te
 
 ## Direction
 
-Left-aligned, asymmetric layouts. Flush-left headings; content hugs the left edge with whitespace on the right. Lean into round shapes — over-rounded containers, pill buttons (`border-radius: 999px`), soft circular accents. Wrap hero and inline images in the `.washed` class — desaturated, lower-contrast and lifted, so they sit back into the page rather than on top of it.
+Left-aligned, asymmetric layouts. Flush-left headings; content hugs the left edge with whitespace on the right. Buttons are outlined (1px accent border on transparent), not solid-filled. In decks, section dividers lift to a saturated deep-indigo ground (the `--color-section` tokens — saturation as presence, at slide scale), and the landing template's one full-bleed stat band makes the same presence move at page scale; everywhere else grounds stay desaturated, with soft gradient depth rather than flat fills. Wrap hero and inline images in the `.lighten` class — `mix-blend-mode: lighten` blends them into whatever the page paints behind them: anything darker than the backdrop falls away, so on a dark page a black photo background disappears entirely. Prefer photographs shot on dark or black backgrounds.
 
 ## Color
 
-A light ground (`--color-bg` #f5ead8) with `--color-text` #201e1d and two accents — `--color-accent` #c67139 and `--color-accent-2` #7a8a5e. Each role carries a 100–900 tonal ramp (`--color-neutral-100` … `--color-accent-2-900`) generated in OKLCH on a shared perceptual lightness scale, so the same step of any ramp has the same visual weight. Use the light steps (100–300) for tinted fills, hovers and subtle borders, 500 as the role's base, and the dark steps (700–900) for text on tinted fills and for pressed states; prefer ramp steps over ad-hoc `color-mix()`. For elevation use `--shadow-sm/md/lg` (already tuned to the ground) rather than ad-hoc box-shadows.
+A dark ground (`--color-bg` #161826) with `--color-text` #e9e9ed and a single accent #9184d9 — a blurple in the product's own Pro-accent hue, at the chroma that hue carries in the app, so the accent reads as an accent against the desaturated ramps (this is a mono scheme: no second accent was chosen — the `--color-accent-2-*` variables carry a machine-derived stand-in kept only so both sets resolve; treat them as one role). Each role carries a 100–900 tonal ramp (`--color-neutral-100` … `--color-accent-2-900`) generated in OKLCH on a shared perceptual lightness scale, so the same step of any ramp has the same visual weight. On this dark ground use the dark steps (700–900) for tinted fills, hovers and subtle borders, 500 as the role's base, and the light steps (100–300) for text on those tints and for pressed states; prefer ramp steps over ad-hoc `color-mix()`. For elevation use `--shadow-sm/md/lg` (already tuned to the ground) rather than ad-hoc box-shadows.
 
 ## Type
 
-Caprasimo for headings over Figtree for body text, loaded as `--font-heading` / `--font-body`. Density 1.10× and radius 16px are already baked into the `--space-*` / `--radius-*` scales — use the variables, not raw numbers.
+Inter for headings over Inter for body text, loaded as `--font-heading` / `--font-body`. Density 0.70× and radius 8px are already baked into the `--space-*` / `--radius-*` scales — use the variables, not raw numbers.
 
 ## Icons
 
-Use Lucide icons (https://lucide.dev), at stroke-width 2.75 for a rounder, heavier look throughout.
+Use Phosphor icons (https://phosphoricons.com) throughout.
 
 ## Interaction states
 
@@ -33,31 +33,31 @@ Interactive states are themed, never browser defaults: give every interactive el
 
 | Class | What it is | Shown in |
 | --- | --- | --- |
-| `.btn` with `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.btn-icon`, `.btn-block` | Actions — the primary is a solid accent fill | components/buttons.html |
-| `.tag` with `.tag-accent`, `.tag-accent-2`, `.tag-neutral`, `.tag-outline` | Small labels tinted from the ramps | components/buttons.html |
+| `.btn` with `.btn-primary`, `.btn-secondary`, `.btn-ghost`, `.btn-icon`, `.btn-block` | Actions — the primary is an accent outline, never a fill | components/buttons.html |
+| `.tag` with `.tag-accent`, `.tag-accent-2`, `.tag-neutral`, `.tag-outline` | Small labels tinted from the ramps (mono palette: accent-2 reads the same as accent) | components/buttons.html |
 | `.field` + `label`, `.input`, `.radio` + `.dot`, `.seg` + `.seg-opt` | Form fields and choices on native elements — no script | components/forms.html |
 | `.card` with `.card-kicker`, `.card-title`, `.card-body`, `.card-meta`; `.elev-sm/md/lg` | Surface-filled content cards; elevation utilities | components/cards.html |
 | `.nav` + `.nav-brand` | The header bar | components/navigation.html |
 | `.table` | Data tables with themed header and row rules | components/table.html |
 | `.dialog-backdrop` + `.dialog` (+ `.dialog-title/-body/-actions`) | A modal at the top elevation | components/dialog.html |
 | `.hr` | A horizontal rule — present, but this system prefers whitespace; avoid it | — |
-| `.washed` | The image wrapper — every content photograph goes through it | foundations/image.html |
+| `.lighten` | The image wrapper — every content photograph goes through it | foundations/image.html |
 
-States are built in: hovers and pressed states come from the accent ramp, keyboard focus is the 2px accent `:focus-visible` ring, `::selection` is an accent tint, and disabled controls drop to 45% opacity. Don't restyle them per page. The accent-to-ground pair is tuned to at least 3:1 — enough for icons, large text and interface chrome, not for body copy — so for paragraph-size text in the accent use a deep ramp step (`--color-accent-700` on this ground) rather than the accent itself.
+States are built in: hovers and pressed states come from the accent ramp, keyboard focus is the 2px accent `:focus-visible` ring, `::selection` is an accent tint, and disabled controls drop to 45% opacity. Don't restyle them per page. The accent-to-ground pair is tuned to at least 3:1 — enough for icons, large text and interface chrome, not for body copy — so for paragraph-size text in the accent use a deep ramp step (`--color-accent-300` on this ground) rather than the accent itself.
 
 ## Do
 
-- Over-round: `--radius-lg` for containers, `border-radius: 999px` for buttons and inputs.
-- Use soft shapes — circles and blobs — as decoration and imagery masks.
-- Reach for the sage `--color-accent-2-*` ramp as a genuine second voice, not just a highlight.
-- Wash photography with the `.washed` wrapper and keep its edges rounded.
+- Keep chroma low outside the accent; lean on the `--color-neutral-*` steps for surfaces, borders and muted text.
+- Use the compact spacing scale (density 0.7×) — this system is dense on purpose.
+- Outline primary actions and let `:focus-visible` carry the accent.
+- Put photographs through the `.lighten` wrapper and prefer subjects shot on dark backgrounds.
 
 ## Don't
 
-- Do not draw sharp corners or hairline-only geometry.
-- Do not desaturate the palette into greys — warmth is the point.
-- Do not use condensed or geometric display faces; Caprasimo is the only display voice.
-- Do not crowd elements; the rounded shapes need air to read as soft.
+- Do not flood large areas with the accent or any saturated fill — the exceptions are the deck section-divider ground and the landing template's stat band (both `--color-section`), saturated fields carried as presence (the accent carries its chroma in lines and marks, never as a flood).
+- Do not use pure black or pure white — every value comes from the ramps. (Shade is the exception, as in the shadow tokens: ambient darkness mixed from black is a shadow, not a color.)
+- Do not stack heavy shadows; on a dark ground elevation is an edge plus ambient darkness.
+- Do not bolden headings past their 500 weight — hierarchy here is size and space.
 
 ## Files
 

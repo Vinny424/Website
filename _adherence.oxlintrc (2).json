@@ -27,8 +27,8 @@
         "message": "Raw px value — use a design-system spacing token via var()."
       },
       {
-        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Caprasimo|Figtree))/i]",
-        "message": "Font not provided by the design system. Available: Caprasimo, Figtree."
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Inter))/i]",
+        "message": "Font not provided by the design system. Available: Inter."
       }
     ]
   },
@@ -76,6 +76,9 @@
       "--color-neutral-700",
       "--color-neutral-800",
       "--color-neutral-900",
+      "--color-section",
+      "--color-section-ghost",
+      "--color-section-glow",
       "--color-surface",
       "--color-text",
       "--font-body",
@@ -128,6 +131,9 @@
       "--color-accent-2-700": "color",
       "--color-accent-2-800": "color",
       "--color-accent-2-900": "color",
+      "--color-section": "color",
+      "--color-section-glow": "color",
+      "--color-section-ghost": "color",
       "--font-heading": "font",
       "--font-heading-weight": "font",
       "--font-body": "font",
@@ -145,8 +151,7 @@
       "--shadow-lg": "shadow"
     },
     "fontFamilies": [
-      "Caprasimo",
-      "Figtree"
+      "Inter"
     ]
   }
 }
