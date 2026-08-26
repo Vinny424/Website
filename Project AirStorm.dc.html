@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/styles.css">
+<script src="_ds/nocturne-27d2bf2d-eba1-4c60-a5ca-f825f5a40c4c/_ds_bundle.js"></script>
+<style>
+body { margin:0; }
+.presslink:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+</style>
+</helmet>
+<div style="background:var(--color-bg); color:var(--color-text); font-family:var(--font-body); min-height:100vh">
+  <dc-import name="Nav" active="projects" hint-size="100%,58px"></dc-import>
+
+  <div style="max-width:1080px; margin:0 auto; padding:0 28px 120px">
+    <section style="padding:64px 0 48px; max-width:760px; display:flex; flex-direction:column; gap:20px">
+      <a href="Projects.dc.html" style="font-size:13px; text-decoration:none">← Projects</a>
+      <div style="display:flex; align-items:center; gap:10px">
+        <span class="tag tag-accent">Shipped</span>
+        <span class="text-muted" style="font-size:12px">Sep 2024 — May 2025</span>
+      </div>
+      <h1 style="margin:0; font-size:52px; letter-spacing:-0.03em; line-height:1.05">Project AirStorm</h1>
+      <p style="margin:0; font-size:18px; line-height:1.6; color:color-mix(in srgb, var(--color-text) 74%, transparent); text-wrap:pretty">An advanced weather visualization application for Air Force Global Strike Command, built on Google's GraphCast AI model to deliver 16-day forecasts at 90% greater accuracy than traditional methods.</p>
+    </section>
+
+    <section style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:var(--color-divider); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:72px">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+        <div style="background:var(--color-bg); padding:24px 22px; display:flex; flex-direction:column; gap:6px">
+          <div style="font-size:30px; color:var(--color-accent); letter-spacing:-0.02em">{{ s.value }}</div>
+          <div class="text-muted" style="font-size:12px; line-height:1.4">{{ s.label }}</div>
+        </div>
+      </sc-for>
+    </section>
+
+    <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="5">
+      <section style="display:grid; grid-template-columns:200px 1fr; gap:40px; padding:44px 0; border-top:1px solid var(--color-divider); align-items:start">
+        <h6 class="text-muted" style="margin:0; padding-top:5px">{{ sec.kicker }}</h6>
+        <div style="max-width:660px; display:flex; flex-direction:column; gap:16px">
+          <h3 style="margin:0; font-size:24px; letter-spacing:-0.02em">{{ sec.title }}</h3>
+          <sc-for list="{{ sec.paras }}" as="para" hint-placeholder-count="2">
+            <p style="margin:0; font-size:15px; line-height:1.7; color:color-mix(in srgb, var(--color-text) 72%, transparent); text-wrap:pretty">{{ para }}</p>
+          </sc-for>
+          <sc-if value="{{ sec.hasBullets }}" hint-placeholder-val="{{ true }}">
+            <ul style="margin:4px 0 0; padding-left:18px; display:flex; flex-direction:column; gap:9px">
+              <sc-for list="{{ sec.bullets }}" as="b" hint-placeholder-count="3">
+                <li style="font-size:15px; line-height:1.6; color:color-mix(in srgb, var(--color-text) 72%, transparent)">{{ b }}</li>
+              </sc-for>
+            </ul>
+          </sc-if>
+          <sc-if value="{{ sec.hasTags }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:4px">
+              <sc-for list="{{ sec.tags }}" as="t" hint-placeholder-count="5">
+                <span class="tag tag-neutral">{{ t }}</span>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </section>
+    </sc-for>
+
+    <section style="display:grid; grid-template-columns:200px 1fr; gap:40px; padding:44px 0; border-top:1px solid var(--color-divider); align-items:start">
+      <h6 class="text-muted" style="margin:0; padding-top:5px">Coverage</h6>
+      <div style="display:flex; flex-direction:column; gap:10px; max-width:660px">
+        <sc-for list="{{ press }}" as="p" hint-placeholder-count="3">
+          <a class="presslink" href="{{ p.href }}" target="_blank" style="display:flex; justify-content:space-between; align-items:center; gap:20px; padding:16px 18px; border:1px solid var(--color-divider); border-radius:var(--radius-md); text-decoration:none; color:inherit">
+            <div style="display:flex; flex-direction:column; gap:4px">
+              <div style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-accent)">{{ p.outlet }}</div>
+              <div style="font-size:15px; line-height:1.35">{{ p.title }}</div>
+            </div>
+            <span style="color:var(--color-accent); font-size:15px">→</span>
+          </a>
+        </sc-for>
+      </div>
+    </section>
+
+    <div class="hr" style="margin:72px 0 28px"></div>
+    <div style="display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; font-size:13px" class="text-muted">
+      <a href="Projects.dc.html" style="text-decoration:none">← All projects</a>
+      <a href="Contact.dc.html" style="text-decoration:none">Get in touch →</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180}}">
+class Component extends DCLogic {
+  renderVals() {
+    const sections = [
+      {
+        kicker: 'Context',
+        title: 'Forecasting that mission planning could actually rely on',
+        paras: ["Air Force Global Strike Command needed weather forecasting it could plan around. Traditional numerical models lose confidence quickly past a few days out, which limits how far ahead operations can be scheduled with any certainty."],
+        hasBullets: false, hasTags: false
+      },
+      {
+        kicker: 'My role',
+        title: 'Led the full-stack build',
+        paras: ["I led full-stack development of the application end to end — the forecasting pipeline, the visualization front end, and the deployment path that put it in front of users."],
+        hasBullets: true,
+        bullets: ['Owned architecture decisions across the model integration and the front end', 'Implemented scalable AWS infrastructure with Docker containerization, holding 99.9% uptime for real-time forecasting', 'Integrated the Open-Meteo API for GEOTIFF/GeoJSON processing to enable precision modeling and visualization', 'Established a CI/CD pipeline on GitHub with ClickUp integration, cutting deployment time by 60%'],
+        hasTags: false
+      },
+      {
+        kicker: 'Approach',
+        title: "Google's GraphCast, wrapped in something usable",
+        paras: ["The core move was replacing conventional numerical forecasting with Google's GraphCast AI model, then building the visualization layer that turned its output into something a planner could read at a glance. The result forecasts 16 days out at 90% greater accuracy than the traditional approach.", "Everything was containerized and shipped through CI/CD, so the model, the API and the interface moved as one reproducible unit rather than a hand-assembled deployment."],
+        hasBullets: false, hasTags: false
+      },
+      {
+        kicker: 'Stack',
+        title: 'What it was built with',
+        paras: [],
+        hasBullets: false,
+        hasTags: true,
+        tags: ['Python', 'GraphCast', 'AWS', 'Docker', 'Open-Meteo', 'GitHub Actions', 'ClickUp']
+      },
+      {
+        kicker: 'Results',
+        title: 'Adopted, and covered',
+        paras: ["The application went into use by Air Force Global Strike Command and the work drew regional and university press coverage. It remains the clearest demonstration of the pattern I keep returning to: take a strong model, give it a deployment path, and make its output legible."],
+        hasBullets: false, hasTags: false
+      }
+    ];
+    return {
+      sections,
+      stats: [
+        { value: '90%', label: 'greater accuracy than traditional forecasting' },
+        { value: '16 days', label: 'forecast window' },
+        { value: '99.9%', label: 'uptime for real-time forecasting on AWS' },
+        { value: '9 mo', label: 'Sep 2024 — May 2025' }
+      ],
+      press: [
+        { outlet: 'LSUS', title: 'LSUS computer science students develop AI-powered weather app for Air Force', href: 'https://www.lsus.edu/lsus-computer-science-students-develop-ai-powered-weather-app-for-air-force' },
+        { outlet: 'KSLA News 12', title: 'Students build weather tech for use by the Air Force', href: 'https://www.ksla.com/video/2025/05/26/students-build-weather-tech-use-by-air-force' },
+        { outlet: 'Shreveport-Bossier Advocate', title: 'LSUS, Haughton student team builds AI weather forecasting for the Air Force', href: 'https://www.shreveportbossieradvocate.com/business/lsus-shreveport-haughton-air-force-ai-weather-forecasts/article_48366a12-b043-4bbe-a7f8-4a054bc7c847.html' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
